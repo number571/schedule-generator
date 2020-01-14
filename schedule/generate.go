@@ -25,7 +25,7 @@ func (gen *Generator) Generate() []Schedule {
 	for grname, group := range gen.Groups {
 		var schedule = gen.newSchedule(grname)
 		nextsub: for sbname, subject := range group.Subjects {
-			for couple := uint8(0); couple < 11; couple++ {
+			for couple := uint8(0); couple < gen.NumTables; couple++ {
 				if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && couple == 6 {
 					break nextsub
 				}
