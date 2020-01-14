@@ -54,6 +54,7 @@ func (gen *Generator) Generate() []Schedule {
 		}
 		list = append(list, schedule)
 	}
+	gen.Day = (gen.Day + 1) % 7
 	return list
 }
 
