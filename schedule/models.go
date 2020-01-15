@@ -11,18 +11,13 @@ const (
 	SATURDAY 	Day = 6
 )
 
-type GenData struct {
-	Day Day
-	Semester uint8
-	NumTables uint8
-	Groups map[string]Group
-}
-
 type Generator struct {
 	Day Day
 	Semester uint8
 	NumTables uint8
 	Groups map[string]Group
+	Teachers map[string]Teacher
+	Blocked map[string]bool
 	Reserved Reserved
 }
 
@@ -44,29 +39,31 @@ type Row struct {
 }
 
 type Teacher struct {
-	Subjects map[string]bool
-	Cabinets map[string]bool
-	Groups map[string]bool
+	Cabinets []string
+	Groups map[string]string
 }
 
-type Subject struct {
-	Teachers map[string]bool
-	Groups map[string]bool
-}
+// QWEasd123
 
-type Cabinet struct {
-	IsComputer bool
-	Places uint16 // free places in cabinet
-	Teachers map[string]bool
-	Subjects map[string]bool
-}
+// type Subject struct {
+// 	Teachers map[string]bool
+// 	Groups map[string]bool
+// }
+
+// type Cabinet struct {
+// 	IsComputer bool
+// 	Places uint16 // free places in cabinet
+// 	Teachers map[string]bool
+// 	Subjects map[string]bool
+// }
 
 type Group struct {
 	Quantity uint16 // students count
-	Subjects map[string]LocalSubj
+	Subjects map[string]*Subject
 }
 
-type LocalSubj struct {
+type Subject struct {
+	Name string
 	Teacher string
 	Hours Hours
 }
