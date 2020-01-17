@@ -89,12 +89,12 @@ var groups = map[string]*schedule.Group{
 			"subject_two": NewSubject("subject_two", "teacher_two", false),
 		},
 	},
-	"102": &schedule.Group{
-		Name: "102",
-		Quantity: 15,
-		Subjects: map[string]*schedule.Subject{
-			"subject_one": NewSubject("subject_one", "teacher_one", true),
-			"subject_two": NewSubject("subject_two", "teacher_two", false),
-		},
-	},
+	// "102": &schedule.Group{
+	// 	Name: "102",
+	// 	Quantity: 15,
+	// 	Subjects: map[string]*schedule.Subject{
+	// 		"subject_one": NewSubject("subject_one", "teacher_one", true),
+	// 		"subject_two": NewSubject("subject_two", "teacher_two", false),
+	// 	},
+	// },
 }

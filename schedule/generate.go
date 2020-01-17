@@ -45,8 +45,12 @@ func (gen *Generator) Generate() []*Schedule {
 					break nextsub
 				}
 			} else {
-				gen.generateSubgroup(A, group, subject, schedule)
-				gen.generateSubgroup(B, group, subject, schedule)
+				if gen.generateSubgroup(A, group, subject, schedule) {
+					break nextsub
+				}
+				if gen.generateSubgroup(B, group, subject, schedule) {
+					break nextsub
+				}
 			}
 		}
 		list = append(list, schedule)
@@ -79,13 +83,23 @@ func (gen *Generator) generateSubgroup(subgroup SubgroupType, group *Group, subj
 		}
 
 		// Without middle spaces.
-		if couple > 1 && gen.CellIsReserved(subgroup, schedule, couple-2) && !gen.CellIsReserved(subgroup, schedule, couple-1) {
-			if subgroup == ALL {
-				return true
+		if couple > 1 {
+			for i := uint8(0); i < couple; i++ {
+				if gen.CellIsReserved(subgroup, schedule, i) && !gen.CellIsReserved(subgroup, schedule, couple-1) {
+					return true
+				}
 			}
-			break
-		}
 
+			if subgroup == ALL {
+				for i := uint8(0); i < couple; i++ {
+					if 	gen.CellIsReserved(A, schedule, i) && !gen.CellIsReserved(B, schedule, couple-1) ||
+						gen.CellIsReserved(B, schedule, i) && !gen.CellIsReserved(A, schedule, couple-1) {
+							return true
+					}
+				}
+			}
+		}
+		
 		gen.Reserved.Teachers[subject.Teacher][couple] = true
 		gen.Reserved.Cabinets[cabinet][couple] = true
 
