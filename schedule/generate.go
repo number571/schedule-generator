@@ -31,39 +31,22 @@ func (gen *Generator) NewSchedule(group string) *Schedule {
 	}
 }
 
-func (gen *Generator) Generate(condition func(*Generator, *Group, *Subject, *Schedule, *uint8) bool) []*Schedule {
+func (gen *Generator) Generate() []*Schedule {
 	var list []*Schedule
-	for grname, group := range gen.Groups {
-		var schedule = gen.NewSchedule(grname)
+	for _, group := range gen.Groups {
+		var schedule = gen.NewSchedule(group.Name)
 		if gen.Day == SUNDAY {
 			list = append(list, schedule)
-			continue	
+			continue
 		}
-		nextsub: for sbname, subject := range group.Subjects {
-			for couple := uint8(0); couple < gen.NumTables; couple++ {
-				if gen.InBlocked(subject.Teacher) || gen.NotHaveHours(subject, gen.Semester){
-					break
-				}
-
-				cabinet := ""
-				if 	gen.IsReserved(schedule, couple) || 
-					gen.TeacherIsReserved(subject.Teacher, couple) || 
-					gen.CabinetIsReserved(subject.Teacher, couple, &cabinet){
-					continue
-				}
-
-				if !condition(gen, &group, subject, schedule, &couple) {
+		nextsub: for _, subject := range group.Subjects {
+			if !subject.IsSplited {
+				if gen.generateSubgroup(ALL, group, subject, schedule) {
 					break nextsub
 				}
-
-				gen.Groups[grname].Subjects[sbname].Hours.Semester[gen.Semester].WeekHours -= 2
-
-				gen.Reserved.Teachers[subject.Teacher][couple] = true
-				gen.Reserved.Cabinets[cabinet][couple] = true
-
-				schedule.Table[couple].Teacher = subject.Teacher
-				schedule.Table[couple].Subject = sbname
-				schedule.Table[couple].Cabinet = cabinet
+			} else {
+				gen.generateSubgroup(A, group, subject, schedule)
+				gen.generateSubgroup(B, group, subject, schedule)
 			}
 		}
 		list = append(list, schedule)
@@ -72,6 +55,69 @@ func (gen *Generator) Generate(condition func(*Generator, *Group, *Subject, *Sch
 	gen.Reserved.Cabinets = make(map[string][]bool)
 	gen.Day = (gen.Day + 1) % 7
 	return list
+}
+
+func (gen *Generator) generateSubgroup(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule) bool {
+	for couple := uint8(0); couple < gen.NumTables; couple++ {
+		if gen.InBlocked(subject.Teacher) || gen.NotHaveHours(subgroup, subject, gen.Semester){
+			break
+		}
+
+		cabinet := ""
+		if 	gen.CellIsReserved(ALL, schedule, couple) || 
+			gen.TeacherIsReserved(subject.Teacher, couple) || 
+			gen.CabinetIsReserved(subject.Teacher, couple, &cabinet){
+			continue
+		}
+
+		// Full day = max 6 couples.
+		if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && couple == 6 {
+			if subgroup == ALL {
+				return true
+			}
+			break
+		}
+
+		// Without middle spaces.
+		if couple > 1 && gen.CellIsReserved(subgroup, schedule, couple-2) && !gen.CellIsReserved(subgroup, schedule, couple-1) {
+			if subgroup == ALL {
+				return true
+			}
+			break
+		}
+
+		gen.Reserved.Teachers[subject.Teacher][couple] = true
+		gen.Reserved.Cabinets[cabinet][couple] = true
+
+		switch subgroup{
+		case A: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A[gen.Semester].WeekHours -= 2
+		case B: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B[gen.Semester].WeekHours -= 2
+		case ALL:
+			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A[gen.Semester].WeekHours -= 2
+			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B[gen.Semester].WeekHours -= 2
+		}
+
+		if subgroup == ALL {
+			schedule.Table[couple].Teacher = [2]string{
+				subject.Teacher,
+				subject.Teacher,
+			}
+			schedule.Table[couple].Subject = [2]string{
+				subject.Name,
+				subject.Name,
+			}
+			schedule.Table[couple].Cabinet = [2]string{
+				cabinet,
+				cabinet,
+			}
+			continue
+		}
+
+		schedule.Table[couple].Teacher[subgroup] = subject.Teacher
+		schedule.Table[couple].Subject[subgroup] = subject.Name
+		schedule.Table[couple].Cabinet[subgroup] = cabinet
+	}
+	return false
 }
 
 func (gen *Generator) SubjectInGroup(subject string, group string) bool {
@@ -143,16 +189,38 @@ func (gen *Generator) CabinetIsReserved(teacher string, couple uint8, cabinet *s
 	return result
 }
 
-func (gen *Generator) IsReserved(schedule *Schedule, couple uint8) bool {
-	if schedule.Table[couple].Subject == "" {
-		return false
+func (gen *Generator) CellIsReserved(subgroup SubgroupType, schedule *Schedule, couple uint8) bool {
+	switch subgroup {
+	case A: 
+		if schedule.Table[couple].Subject[A] == "" {
+			return false
+		}
+	case B:
+		if schedule.Table[couple].Subject[B] == "" {
+			return false
+		}
+	case ALL:
+		if schedule.Table[couple].Subject[A] == "" && schedule.Table[couple].Subject[B] == "" {
+			return false
+		}
 	}
 	return true
 }
 
-func (gen *Generator) NotHaveHours(subject *Subject, semester uint8) bool {
-	if subject.Hours.Semester[semester].WeekHours == 0 {
-		return true
+func (gen *Generator) NotHaveHours(subgroup SubgroupType, subject *Subject, semester uint8) bool {
+	switch subgroup {
+	case A:
+		if subject.Subgroup.A[semester].WeekHours == 0 {
+			return true
+		}
+	case B:
+		if subject.Subgroup.B[semester].WeekHours == 0 {
+			return true
+		}
+	case ALL:
+		if subject.Subgroup.A[semester].WeekHours == 0 && subject.Subgroup.B[semester].WeekHours == 0 {
+			return true
+		}
 	}
 	return false
 }

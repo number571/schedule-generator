@@ -1,21 +1,28 @@
 package schedule
 
-type Day uint8
+type DayType uint8
 const (
-	SUNDAY 		Day = 0
-	MONDAY 		Day = 1
-	TUESDAY 	Day = 2
-	WEDNESDAY 	Day = 3
-	THURSDAY 	Day = 4
-	FRIDAY 		Day = 5
-	SATURDAY 	Day = 6
+	SUNDAY 		DayType = 0
+	MONDAY 		DayType = 1
+	TUESDAY 	DayType = 2
+	WEDNESDAY 	DayType = 3
+	THURSDAY 	DayType = 4
+	FRIDAY 		DayType = 5
+	SATURDAY 	DayType = 6
+)
+
+type SubgroupType uint8
+const (
+	A 	SubgroupType = 0
+	B 	SubgroupType = 1
+	ALL SubgroupType = 2
 )
 
 type Generator struct {
-	Day Day
+	Day DayType
 	Semester uint8
 	NumTables uint8
-	Groups map[string]Group
+	Groups map[string]*Group
 	Teachers map[string]Teacher
 	Blocked map[string]bool
 	Reserved Reserved
@@ -27,15 +34,15 @@ type Reserved struct {
 }
 
 type Schedule struct {
-	Day Day
+	Day DayType
 	Group string
 	Table []Row
 }
 
 type Row struct {
-	Teacher string
-	Subject string
-	Cabinet string
+	Teacher [2]string
+	Subject [2]string
+	Cabinet [2]string
 }
 
 type Teacher struct {
@@ -58,6 +65,7 @@ type Teacher struct {
 // }
 
 type Group struct {
+	Name string
 	Quantity uint16 // students count
 	Subjects map[string]*Subject
 }
@@ -65,13 +73,19 @@ type Group struct {
 type Subject struct {
 	Name string
 	Teacher string
-	Hours Hours
+	IsSplited bool
+	Subgroup Subgroup
 }
 
-type Hours struct {
-	All uint16
-	Semester []Semester
+type Subgroup struct {
+	A [2]Semester
+	B [2]Semester
 }
+
+// type Hours struct {
+// 	All uint16
+// 	Semester []Semester
+// }
 
 type Semester struct {
 	All uint16
