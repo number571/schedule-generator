@@ -23,7 +23,7 @@ type Generator struct {
 	Semester uint8
 	NumTables uint8
 	Groups map[string]*Group
-	Teachers map[string]Teacher
+	Teachers map[string]*Teacher
 	Blocked map[string]bool
 	Reserved Reserved
 }

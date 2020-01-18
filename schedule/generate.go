@@ -1,6 +1,7 @@
 package schedule
 
 import (
+	// "fmt"
 	"errors"
 )
 
@@ -41,10 +42,12 @@ func (gen *Generator) Generate() []*Schedule {
 		}
 		nextsub: for _, subject := range group.Subjects {
 			if !subject.IsSplited {
+				// fmt.Println("not splited")
 				if gen.generateSubgroup(ALL, group, subject, schedule) {
 					break nextsub
 				}
 			} else {
+				// fmt.Println("splited")
 				if gen.generateSubgroup(A, group, subject, schedule) {
 					break nextsub
 				}
@@ -62,12 +65,34 @@ func (gen *Generator) Generate() []*Schedule {
 }
 
 func (gen *Generator) generateSubgroup(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule) bool {
+	tryBreak := false
+
 	for couple := uint8(0); couple < gen.NumTables; couple++ {
 		if gen.InBlocked(subject.Teacher) || gen.NotHaveHours(subgroup, subject, gen.Semester){
 			break
 		}
 
+		saveCouple := couple
+
+		// Without middle spaces.
+		if subgroup == ALL {
+			for i := uint8(1); i < gen.NumTables; i++ {
+				if 	(gen.CellIsReserved(A, schedule, i) || gen.CellIsReserved(B, schedule, i)) &&
+					!gen.CellIsReserved(ALL, schedule, i-1) {
+						couple = i-1
+						tryBreak = true
+						break
+				}
+			}
+		}
+
 		cabinet := ""
+		if (gen.CellIsReserved(ALL, schedule, couple) || 
+			gen.TeacherIsReserved(subject.Teacher, couple) || 
+			gen.CabinetIsReserved(subject.Teacher, couple, &cabinet)) && tryBreak {
+				return true
+		}
+
 		if 	gen.CellIsReserved(ALL, schedule, couple) || 
 			gen.TeacherIsReserved(subject.Teacher, couple) || 
 			gen.CabinetIsReserved(subject.Teacher, couple, &cabinet){
@@ -84,22 +109,23 @@ func (gen *Generator) generateSubgroup(subgroup SubgroupType, group *Group, subj
 
 		// Without middle spaces.
 		if couple > 1 {
-			for i := uint8(0); i < couple; i++ {
-				if gen.CellIsReserved(subgroup, schedule, i) && !gen.CellIsReserved(subgroup, schedule, couple-1) {
-					return true
-				}
-			}
-
-			if subgroup == ALL {
+			switch subgroup {
+			case ALL:
 				for i := uint8(0); i < couple; i++ {
-					if 	gen.CellIsReserved(A, schedule, i) && !gen.CellIsReserved(B, schedule, couple-1) ||
-						gen.CellIsReserved(B, schedule, i) && !gen.CellIsReserved(A, schedule, couple-1) {
+					if 	gen.CellIsReserved(A, schedule, i) && gen.CellIsReserved(B, schedule, couple-1) ||
+						gen.CellIsReserved(B, schedule, i) && gen.CellIsReserved(A, schedule, couple-1) {
+							return true
+					}
+				}
+			default:
+				for i := uint8(0); i < couple; i++ {
+					if 	gen.CellIsReserved(subgroup, schedule, i) && !gen.CellIsReserved(subgroup, schedule, couple-1)  {
 							return true
 					}
 				}
 			}
 		}
-		
+
 		gen.Reserved.Teachers[subject.Teacher][couple] = true
 		gen.Reserved.Cabinets[cabinet][couple] = true
 
@@ -123,6 +149,9 @@ func (gen *Generator) generateSubgroup(subgroup SubgroupType, group *Group, subj
 			schedule.Table[couple].Cabinet = [2]string{
 				cabinet,
 				cabinet,
+			}
+			if saveCouple != couple {
+				couple = saveCouple
 			}
 			continue
 		}

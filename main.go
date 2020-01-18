@@ -16,7 +16,7 @@ func main() {
 	})
 	PrintJSON(generator.Generate())
 	// generator.BlockTeacher("teacher_two")
-	PrintJSON(generator.Generate())
+	// PrintJSON(generator.Generate())
 	// generator.UnblockTeacher("teacher_two")
 	// PrintJSON(generator.Generate())
 }
@@ -26,38 +26,49 @@ func PrintJSON(data interface{}) {
 	fmt.Println(string(jsonData))
 }
 
-func NewSubject(subject string, teacher string, splited bool) *schedule.Subject {
+func NewSubject(name string, teacher string, splited bool, semesters [2]schedule.Semester) *schedule.Subject {
 	return &schedule.Subject{
-		Name: subject,
+		Name: name,
 		Teacher: teacher,
 		IsSplited: splited,
 		Subgroup: schedule.Subgroup{
 			A: [2]schedule.Semester{
 				schedule.Semester{
-					All: 28,
-					WeekHours: 4, // 2 couples
+					All: semesters[0].All,
+					WeekHours: semesters[0].WeekHours, // 2 couples
 				},
 				schedule.Semester{
-					All: 22,
-					WeekHours: 2,
+					All: semesters[1].All,
+					WeekHours: semesters[1].WeekHours, // 1 couple
 				},
 			},
 			B: [2]schedule.Semester{
 				schedule.Semester{
-					All: 28,
-					WeekHours: 4, // 2 couples
+					All: semesters[0].All,
+					WeekHours: semesters[0].WeekHours, // 2 couples
 				},
 				schedule.Semester{
-					All: 22,
-					WeekHours: 2,
+					All: semesters[1].All,
+					WeekHours: semesters[1].WeekHours, // 1 couple
 				},
 			},
 		},
 	}
 }
 
-var teachers = map[string]schedule.Teacher{
-	"teacher_one": schedule.Teacher{
+var semesterExample = [2]schedule.Semester{
+	schedule.Semester{
+		All: 28,
+		WeekHours: 4, // 2 couples
+	},
+	schedule.Semester{
+		All: 22,
+		WeekHours: 2, // 1 couple
+	},
+}
+
+var teachers = map[string]*schedule.Teacher{
+	"teacher_one": &schedule.Teacher{
 		Cabinets: []string{
 			"201", 
 			"204",
@@ -66,9 +77,11 @@ var teachers = map[string]schedule.Teacher{
 			"101": "subject_one",
 			"102": "subject_one",
 			"103": "subject_one",
+			"104": "subject_one",
+			"105": "subject_one",
 		},
 	},
-	"teacher_two": schedule.Teacher{
+	"teacher_two": &schedule.Teacher{
 		Cabinets: []string{
 			"301",
 		},
@@ -76,8 +89,22 @@ var teachers = map[string]schedule.Teacher{
 			"101": "subject_two",
 			"102": "subject_two",
 			"103": "subject_two",
+			"104": "subject_two",
+			"105": "subject_two",
 		},
 	},
+	// "teacher_three": &schedule.Teacher{
+	// 	Cabinets: []string{
+	// 		"301",
+	// 	},
+	// 	Groups: map[string]string{
+	// 		"101": "subject_three",
+	// 		"102": "subject_three",
+	// 		"103": "subject_three",
+	// 		"104": "subject_three",
+	// 		"105": "subject_three",
+	// 	},
+	// },
 }
 
 var groups = map[string]*schedule.Group{
@@ -85,16 +112,45 @@ var groups = map[string]*schedule.Group{
 		Name: "101",
 		Quantity: 20,
 		Subjects: map[string]*schedule.Subject{
-			"subject_one": NewSubject("subject_one", "teacher_one", true),
-			"subject_two": NewSubject("subject_two", "teacher_two", false),
+			"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
+			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+			// "subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
 		},
 	},
-	// "102": &schedule.Group{
-	// 	Name: "102",
+	"102": &schedule.Group{
+		Name: "102",
+		Quantity: 15,
+		Subjects: map[string]*schedule.Subject{
+			"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
+			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+			// "subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+		},
+	},
+	// "103": &schedule.Group{
+	// 	Name: "103",
 	// 	Quantity: 15,
 	// 	Subjects: map[string]*schedule.Subject{
-	// 		"subject_one": NewSubject("subject_one", "teacher_one", true),
-	// 		"subject_two": NewSubject("subject_two", "teacher_two", false),
+	// 		"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
+	// 		"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+	// 		"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+	// 	},
+	// },
+	// "104": &schedule.Group{
+	// 	Name: "104",
+	// 	Quantity: 15,
+	// 	Subjects: map[string]*schedule.Subject{
+	// 		"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
+	// 		"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+	// 		"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+	// 	},
+	// },
+	// "105": &schedule.Group{
+	// 	Name: "105",
+	// 	Quantity: 15,
+	// 	Subjects: map[string]*schedule.Subject{
+	// 		"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
+	// 		"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+	// 		"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
 	// 	},
 	// },
 }
