@@ -1,7 +1,7 @@
 package schedule
 
 import (
-	// "fmt"
+	"fmt"
 	"errors"
 )
 
@@ -42,12 +42,18 @@ func (gen *Generator) Generate() []*Schedule {
 		}
 		nextsub: for _, subject := range group.Subjects {
 			if !subject.IsSplited {
-				// fmt.Println("not splited")
+				if group.Name == "102" {
+					fmt.Println("not splited")
+				}
+				
 				if gen.generateSubgroup(ALL, group, subject, schedule) {
 					break nextsub
 				}
 			} else {
-				// fmt.Println("splited")
+				if group.Name == "102" {
+					fmt.Println("splited")
+				}
+
 				if gen.generateSubgroup(A, group, subject, schedule) {
 					break nextsub
 				}
@@ -65,101 +71,166 @@ func (gen *Generator) Generate() []*Schedule {
 }
 
 func (gen *Generator) generateSubgroup(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule) bool {
-	tryBreak := false
-
-	for couple := uint8(0); couple < gen.NumTables; couple++ {
-		if gen.InBlocked(subject.Teacher) || gen.NotHaveHours(subgroup, subject, gen.Semester){
+	nextLesson: for lesson := uint8(0); lesson < gen.NumTables; lesson++ {
+		if gen.InBlocked(subject.Teacher) || gen.NotHaveLessons(subgroup, subject, gen.Semester){
 			break
 		}
 
-		saveCouple := couple
+		isAfter := false
+		savedLesson := lesson
 
-		// Without middle spaces.
-		if subgroup == ALL {
-			for i := uint8(1); i < gen.NumTables; i++ {
-				if 	(gen.CellIsReserved(A, schedule, i) || gen.CellIsReserved(B, schedule, i)) &&
-					!gen.CellIsReserved(ALL, schedule, i-1) {
-						couple = i-1
-						tryBreak = true
+		// [ I ] Первая проверка.
+		switch subgroup {
+		case ALL:
+			// Если две подгруппы стоят друг за другом, тогда исключить возможность добавления полной пары.
+			for i := uint8(0); i < gen.NumTables-1; i++ {
+				if 	gen.CellIsReserved(A, schedule, i) && !gen.CellIsReserved(B, schedule, i) && gen.CellIsReserved(B, schedule, i+1) && !gen.CellIsReserved(A, schedule, i+1) ||
+					gen.CellIsReserved(B, schedule, i) && !gen.CellIsReserved(A, schedule, i) && gen.CellIsReserved(A, schedule, i+1) && !gen.CellIsReserved(B, schedule, i+1) {
+						return true
+					}
+			}
+			// "Подтягивать" полные пары к уже существующим [перед].
+			for i := uint8(0); i < gen.NumTables-1; i++ {
+				if 	(gen.CellIsReserved(A, schedule, i+1) || gen.CellIsReserved(B, schedule, i+1)) &&
+					!gen.CellIsReserved(ALL, schedule, i) {
+						lesson = i
 						break
+					}
+			}
+		default:
+			// "Подтягивать" неполные пары к уже существующим полным [перед].
+			for i := uint8(0); i < gen.NumTables-1; i++ {
+				if 	(gen.CellIsReserved(ALL, schedule, i+1) || gen.CellIsReserved(subgroup, schedule, i+1)) &&
+					!gen.CellIsReserved(subgroup, schedule, i) {
+						lesson = i
+						break
+					}
+			}
+		}
+
+tryAfter:
+		if isAfter {
+			switch subgroup {
+			case ALL:
+				// "Подтягивать" полные пары к уже существующим [после].
+				for i := uint8(0); i < gen.NumTables-1; i++ {
+					if 	(gen.CellIsReserved(A, schedule, i) || gen.CellIsReserved(B, schedule, i)) &&
+						!gen.CellIsReserved(ALL, schedule, i+1) {
+							lesson = i+1
+							break
+						}
+				}
+			default:
+				// "Подтягивать" неполные пары к уже существующим [после].
+				for i := uint8(0); i < gen.NumTables-1; i++ {
+					if 	(gen.CellIsReserved(ALL, schedule, i) || gen.CellIsReserved(subgroup, schedule, i)) &&
+						!gen.CellIsReserved(subgroup, schedule, i+1) {
+							lesson = i+1
+							break
+						}
 				}
 			}
+			
 		}
 
 		cabinet := ""
-		if (gen.CellIsReserved(ALL, schedule, couple) || 
-			gen.TeacherIsReserved(subject.Teacher, couple) || 
-			gen.CabinetIsReserved(subject.Teacher, couple, &cabinet)) && tryBreak {
-				return true
-		}
-
-		if 	gen.CellIsReserved(ALL, schedule, couple) || 
-			gen.TeacherIsReserved(subject.Teacher, couple) || 
-			gen.CabinetIsReserved(subject.Teacher, couple, &cabinet){
-			continue
+		if 	gen.CellIsReserved(subgroup, schedule, lesson) || 
+			gen.TeacherIsReserved(subject.Teacher, lesson) || 
+			gen.CabinetIsReserved(subject.Teacher, lesson, &cabinet) {
+				if isAfter {
+					break nextLesson
+				}
+				if lesson != savedLesson {
+					isAfter = true
+					goto tryAfter
+				}
+				continue nextLesson
 		}
 
 		// Full day = max 6 couples.
-		if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && couple == 6 {
-			if subgroup == ALL {
-				return true
-			}
-			break
+		if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && lesson == 6 {
+			break nextLesson
 		}
 
-		// Without middle spaces.
-		if couple > 1 {
-			switch subgroup {
-			case ALL:
-				for i := uint8(0); i < couple; i++ {
-					if 	gen.CellIsReserved(A, schedule, i) && gen.CellIsReserved(B, schedule, couple-1) ||
-						gen.CellIsReserved(B, schedule, i) && gen.CellIsReserved(A, schedule, couple-1) {
-							return true
+		// [ II ] Вторая проверка.
+		switch subgroup {
+		case ALL:
+			// Если уже существует полная пара, которая стоит за парами с подгруппами, тогда
+			// перейти на новую ячейку расписания группы.
+			for i := lesson; i < gen.NumTables-1; i++ {
+				if 	gen.CellIsReserved(A, schedule, i) && !gen.CellIsReserved(B, schedule, i) && gen.CellIsReserved(ALL, schedule, i+1) ||
+					gen.CellIsReserved(B, schedule, i) && !gen.CellIsReserved(A, schedule, i) && gen.CellIsReserved(ALL, schedule, i+1) {
+						lesson = savedLesson
+						continue nextLesson
 					}
+			}
+		default:
+			// Если у одной подгруппы уже имеется пара, а у второй стоит пара
+			// в это же время, тогда пропустить проверку пустых окон.
+			if 	gen.CellIsReserved(A, schedule, lesson) && A != subgroup || 
+				gen.CellIsReserved(B, schedule, lesson) && B != subgroup {
+					goto passcheck2
+			}
+			// Если стоит полная пара, а за ней идёт подгруппа неравная проверяемой, тогда
+			// прекратить ставить пары у проверяемой подгруппы.
+			fullLessons := false
+			for i := uint8(0); i < lesson; i++ {
+				if gen.CellIsReserved(ALL, schedule, i) {
+					fullLessons = true
+					continue
 				}
-			default:
-				for i := uint8(0); i < couple; i++ {
-					if 	gen.CellIsReserved(subgroup, schedule, i) && !gen.CellIsReserved(subgroup, schedule, couple-1)  {
-							return true
-					}
+				if 	(fullLessons && gen.CellIsReserved(A, schedule, i) && A != subgroup) ||
+					(fullLessons && gen.CellIsReserved(B, schedule, i) && B != subgroup) {
+						return true
 				}
 			}
 		}
 
-		gen.Reserved.Teachers[subject.Teacher][couple] = true
-		gen.Reserved.Cabinets[cabinet][couple] = true
+passcheck2:
+		// [ III ] Третья проверка.
+		if lesson > 1 {
+			// Если нет возможности добавить новые пары без создания окон, тогда не ставить пары.
+			for i := uint8(0); i < lesson-1; i++ {
+				if gen.CellIsReserved(subgroup, schedule, i) && !gen.CellIsReserved(subgroup, schedule, lesson-1) {
+					return false
+				}
+			}
+		}
+
+		gen.Reserved.Teachers[subject.Teacher][lesson] = true
+		gen.Reserved.Cabinets[cabinet][lesson] = true
 
 		switch subgroup{
-		case A: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A[gen.Semester].WeekHours -= 2
-		case B: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B[gen.Semester].WeekHours -= 2
+		case A: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A[gen.Semester].WeekLessons -= 1
+		case B: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B[gen.Semester].WeekLessons -= 1
 		case ALL:
-			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A[gen.Semester].WeekHours -= 2
-			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B[gen.Semester].WeekHours -= 2
+			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A[gen.Semester].WeekLessons -= 1
+			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B[gen.Semester].WeekLessons -= 1
 		}
 
 		if subgroup == ALL {
-			schedule.Table[couple].Teacher = [2]string{
+			schedule.Table[lesson].Teacher = [2]string{
 				subject.Teacher,
 				subject.Teacher,
 			}
-			schedule.Table[couple].Subject = [2]string{
+			schedule.Table[lesson].Subject = [2]string{
 				subject.Name,
 				subject.Name,
 			}
-			schedule.Table[couple].Cabinet = [2]string{
+			schedule.Table[lesson].Cabinet = [2]string{
 				cabinet,
 				cabinet,
 			}
-			if saveCouple != couple {
-				couple = saveCouple
-			}
-			continue
+			lesson = savedLesson
+			continue nextLesson
 		}
 
-		schedule.Table[couple].Teacher[subgroup] = subject.Teacher
-		schedule.Table[couple].Subject[subgroup] = subject.Name
-		schedule.Table[couple].Cabinet[subgroup] = cabinet
+		schedule.Table[lesson].Teacher[subgroup] = subject.Teacher
+		schedule.Table[lesson].Subject[subgroup] = subject.Name
+		schedule.Table[lesson].Cabinet[subgroup] = cabinet
+		lesson = savedLesson
 	}
+	
 	return false
 }
 
@@ -210,20 +281,20 @@ func (gen *Generator) UnblockTeacher(teacher string) error {
 	return nil
 }
 
-func (gen *Generator) TeacherIsReserved(teacher string, couple uint8) bool {
+func (gen *Generator) TeacherIsReserved(teacher string, lesson uint8) bool {
 	gen.teacherToReserved(teacher)
 	if value, ok := gen.Reserved.Teachers[teacher]; ok {
-		return value[couple] == true
+		return value[lesson] == true
 	}
 	return false
 }
 
-func (gen *Generator) CabinetIsReserved(teacher string, couple uint8, cabinet *string) bool {
+func (gen *Generator) CabinetIsReserved(teacher string, lesson uint8, cabinet *string) bool {
 	var result = true
 	for _, cabnum := range gen.Teachers[teacher].Cabinets {
 		gen.cabinetToReserved(cabnum)
 		if _, ok := gen.Reserved.Cabinets[cabnum]; ok {
-			if gen.Reserved.Cabinets[cabnum][couple] == false {
+			if gen.Reserved.Cabinets[cabnum][lesson] == false {
 				*cabinet = cabnum
 				return false
 			}
@@ -232,36 +303,36 @@ func (gen *Generator) CabinetIsReserved(teacher string, couple uint8, cabinet *s
 	return result
 }
 
-func (gen *Generator) CellIsReserved(subgroup SubgroupType, schedule *Schedule, couple uint8) bool {
+func (gen *Generator) CellIsReserved(subgroup SubgroupType, schedule *Schedule, lesson uint8) bool {
 	switch subgroup {
 	case A: 
-		if schedule.Table[couple].Subject[A] == "" {
-			return false
+		if schedule.Table[lesson].Subject[A] != "" {
+			return true
 		}
 	case B:
-		if schedule.Table[couple].Subject[B] == "" {
-			return false
+		if schedule.Table[lesson].Subject[B] != "" {
+			return true
 		}
 	case ALL:
-		if schedule.Table[couple].Subject[A] == "" && schedule.Table[couple].Subject[B] == "" {
-			return false
+		if schedule.Table[lesson].Subject[A] != "" && schedule.Table[lesson].Subject[B] != "" {
+			return true
 		}
 	}
-	return true
+	return false
 }
 
-func (gen *Generator) NotHaveHours(subgroup SubgroupType, subject *Subject, semester uint8) bool {
+func (gen *Generator) NotHaveLessons(subgroup SubgroupType, subject *Subject, semester uint8) bool {
 	switch subgroup {
 	case A:
-		if subject.Subgroup.A[semester].WeekHours == 0 {
+		if subject.Subgroup.A[semester].WeekLessons == 0 {
 			return true
 		}
 	case B:
-		if subject.Subgroup.B[semester].WeekHours == 0 {
+		if subject.Subgroup.B[semester].WeekLessons == 0 {
 			return true
 		}
 	case ALL:
-		if subject.Subgroup.A[semester].WeekHours == 0 && subject.Subgroup.B[semester].WeekHours == 0 {
+		if subject.Subgroup.A[semester].WeekLessons == 0 && subject.Subgroup.B[semester].WeekLessons == 0 {
 			return true
 		}
 	}

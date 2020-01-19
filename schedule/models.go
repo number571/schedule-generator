@@ -50,8 +50,6 @@ type Teacher struct {
 	Groups map[string]string
 }
 
-// QWEasd123
-
 // type Subject struct {
 // 	Teachers map[string]bool
 // 	Groups map[string]bool
@@ -89,5 +87,5 @@ type Subgroup struct {
 
 type Semester struct {
 	All uint16
-	WeekHours uint8
+	WeekLessons uint8
 }
