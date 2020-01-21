@@ -22,36 +22,36 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
 					}
 			}
 
-			// Если между двумя разными подгруппами находятся окна, тогда посчитать сколько пустых окон.
-			// Если их количество = 1, тогда попытаться подставить полную пару под это окно. 
-			// Если не получается, тогда не ставить полную пару.
-			cellSubgroupReserved := false
-			indexNotReserved := uint8(0)
-			cellIsNotReserved := 0
-			for i := uint8(0); i < gen.NumTables-1; i++ {
-				if 	gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i) ||
-					gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(A, schedule, i) {
-						if cellIsNotReserved != 0 {
-							if cellIsNotReserved == 1 {
-								lesson = indexNotReserved
-								goto tryAfter
-							}
-							return true
-						}
-						cellSubgroupReserved = true
-					}
-				if !gen.cellIsReserved(ALL, schedule, i) && cellSubgroupReserved {
-					if cellIsNotReserved == 0 {
-						indexNotReserved = i
-					}
-					cellIsNotReserved += 1
-				}
-			}
+			// // Если между двумя разными подгруппами находятся окна, тогда посчитать сколько пустых окон.
+			// // Если их количество = 1, тогда попытаться подставить полную пару под это окно. 
+			// // Если не получается, тогда не ставить полную пару.
+			// cellSubgroupReserved := false
+			// indexNotReserved := uint8(0)
+			// cellIsNotReserved := 0
+			// for i := uint8(0); i < gen.NumTables-1; i++ {
+			// 	if 	gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i) ||
+			// 		gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(A, schedule, i) {
+			// 			if cellIsNotReserved != 0 {
+			// 				if cellIsNotReserved == 1 {
+			// 					lesson = indexNotReserved
+			// 					goto tryAfter
+			// 				}
+			// 				return true
+			// 			}
+			// 			cellSubgroupReserved = true
+			// 		}
+			// 	if !gen.cellIsReserved(ALL, schedule, i) && cellSubgroupReserved {
+			// 		if cellIsNotReserved == 0 {
+			// 			indexNotReserved = i
+			// 		}
+			// 		cellIsNotReserved += 1
+			// 	}
+			// }
 
 			// "Подтягивать" полные пары к уже существующим [перед].
 			for i := uint8(0); i < gen.NumTables-1; i++ {
 				if 	(gen.cellIsReserved(A, schedule, i+1) || gen.cellIsReserved(B, schedule, i+1)) &&
-					!gen.cellIsReserved(ALL, schedule, i) {
+					(!gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i)) {
 						lesson = i
 						break
 					}
@@ -74,7 +74,7 @@ tryAfter:
 				// "Подтягивать" полные пары к уже существующим [после].
 				for i := uint8(0); i < gen.NumTables-1; i++ {
 					if 	(gen.cellIsReserved(A, schedule, i) || gen.cellIsReserved(B, schedule, i)) &&
-						!gen.cellIsReserved(ALL, schedule, i+1) {
+						(!gen.cellIsReserved(A, schedule, i+1) && !gen.cellIsReserved(B, schedule, i+1)) {
 							lesson = i+1
 							break
 						}
@@ -149,7 +149,7 @@ passcheck2:
 		if lesson > 1 {
 			// Если нет возможности добавить новые пары без создания окон, тогда не ставить пары.
 			for i := uint8(0); i < lesson-1; i++ {
-				if gen.cellIsReserved(subgroup, schedule, i) && !gen.cellIsReserved(subgroup, schedule, lesson-1) {
+				if 	gen.cellIsReserved(subgroup, schedule, i) && !gen.cellIsReserved(subgroup, schedule, lesson-1) {
 					return false
 				}
 			}
