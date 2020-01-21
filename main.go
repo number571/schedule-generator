@@ -103,6 +103,18 @@ var teachers = map[string]*schedule.Teacher{
 			"105": "subject_three",
 		},
 	},
+	"teacher_four": &schedule.Teacher{
+		Cabinets: []string{
+			"305",
+		},
+		Groups: map[string]string{
+			"101": "subject_four",
+			"102": "subject_four",
+			"103": "subject_four",
+			"104": "subject_four",
+			"105": "subject_four",
+		},
+	},
 }
 
 var groups = map[string]*schedule.Group{
@@ -112,7 +124,8 @@ var groups = map[string]*schedule.Group{
 		Subjects: map[string]*schedule.Subject{
 			"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
 			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
-			"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+			"subject_three": NewSubject("subject_three", "teacher_three", true, semesterExample),
+			"subject_four": NewSubject("subject_four", "teacher_four", false, semesterExample),
 		},
 	},
 	"102": &schedule.Group{
@@ -122,6 +135,7 @@ var groups = map[string]*schedule.Group{
 			"subject_one": NewSubject("subject_one", "teacher_one", false, semesterExample),
 			"subject_two": NewSubject("subject_two", "teacher_two", true, semesterExample),
 			"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+			"subject_four": NewSubject("subject_four", "teacher_four", false, semesterExample),
 		},
 	},
 	"103": &schedule.Group{
@@ -131,6 +145,7 @@ var groups = map[string]*schedule.Group{
 			"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
 			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
 			"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+			"subject_four": NewSubject("subject_four", "teacher_four", false, semesterExample),
 		},
 	},
 	"104": &schedule.Group{
@@ -140,6 +155,7 @@ var groups = map[string]*schedule.Group{
 			"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
 			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
 			"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+			"subject_four": NewSubject("subject_four", "teacher_four", true, semesterExample),
 		},
 	},
 	"105": &schedule.Group{
@@ -149,6 +165,7 @@ var groups = map[string]*schedule.Group{
 			"subject_one": NewSubject("subject_one", "teacher_one", false, semesterExample),
 			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
 			"subject_three": NewSubject("subject_three", "teacher_three", true, semesterExample),
+			"subject_four": NewSubject("subject_four", "teacher_four", true, semesterExample),
 		},
 	},
 }

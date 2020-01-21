@@ -48,27 +48,41 @@ func (gen *Generator) WriteXLSX(filename string, schedule []*Schedule) error {
         for j, trow := range sch.Table {
 
             cell = row[j+1].AddCell()
-            switch {
-            case trow.Teacher[0] == trow.Teacher[1]: cell.Value = trow.Teacher[0]
-            case trow.Teacher[0] != "": cell.Value = trow.Teacher[0]
-            case trow.Teacher[1] != "": cell.Value += "\n" + trow.Teacher[1]
+            if trow.Teacher[0] == trow.Teacher[1] {
+                cell.Value = trow.Teacher[0]
+            } else {
+                if trow.Teacher[0] != "" {
+                    cell.Value = trow.Teacher[0]
+                }
+                if trow.Teacher[1] != "" {
+                    cell.Value += "\n" + trow.Teacher[1]
+                }
             }
-
+            
             cell = row[j+1].AddCell()
-            switch {
-            case trow.Subject[0] == trow.Subject[1]: cell.Value = trow.Subject[0]
-            case trow.Subject[0] != "": cell.Value = trow.Subject[0] + " (A)"
-            case trow.Subject[1] != "": cell.Value += "\n" + trow.Subject[1] + " (B)"
+            if trow.Subject[0] == trow.Subject[1] {
+                cell.Value = trow.Teacher[0]
+            } else {
+                if trow.Subject[0] != "" {
+                    cell.Value = trow.Subject[0] + " (A)"
+                }
+                if trow.Subject[1] != "" {
+                    cell.Value += "\n" + trow.Subject[1] + " (B)"
+                }
             }
 
             sheet.SetColWidth(colWidthForCabinets(i))
             cell = row[j+1].AddCell()
-            switch {
-            case trow.Cabinet[0] == trow.Cabinet[1]: cell.Value = trow.Cabinet[0]
-            case trow.Cabinet[0] != "": cell.Value = trow.Cabinet[0]
-            case trow.Cabinet[1] != "": cell.Value += "\n" + trow.Cabinet[1]
+            if trow.Cabinet[0] == trow.Cabinet[1] {
+                cell.Value = trow.Cabinet[0]
+            } else {
+                if trow.Cabinet[0] != "" {
+                    cell.Value = trow.Cabinet[0]
+                }
+                if trow.Cabinet[1] != "" {
+                    cell.Value += "\n" + trow.Cabinet[1]
+                }
             }
-
         }
     }
 
