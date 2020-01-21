@@ -8,14 +8,14 @@ import (
 
 func main() {
 	var generator = schedule.NewGenerator(&schedule.Generator{
-		Day: schedule.MONDAY,
+		Day: schedule.SATURDAY,
 		Semester: 1,
 		NumTables: 11,
 		Groups: groups,
 		Teachers: teachers,
 	})
 	result := generator.Generate()
-	PrintJSON(result)
+	// PrintJSON(result)
 	generator.WriteXLSX("schedule.xlsx", result)
 }
 
@@ -158,14 +158,14 @@ var groups = map[string]*schedule.Group{
 			"subject_four": NewSubject("subject_four", "teacher_four", true, semesterExample),
 		},
 	},
-	"105": &schedule.Group{
-		Name: "105",
-		Quantity: 15,
-		Subjects: map[string]*schedule.Subject{
-			"subject_one": NewSubject("subject_one", "teacher_one", false, semesterExample),
-			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
-			"subject_three": NewSubject("subject_three", "teacher_three", true, semesterExample),
-			"subject_four": NewSubject("subject_four", "teacher_four", true, semesterExample),
-		},
-	},
+	// "105": &schedule.Group{
+	// 	Name: "105",
+	// 	Quantity: 15,
+	// 	Subjects: map[string]*schedule.Subject{
+	// 		"subject_one": NewSubject("subject_one", "teacher_one", false, semesterExample),
+	// 		"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+	// 		"subject_three": NewSubject("subject_three", "teacher_three", true, semesterExample),
+	// 		"subject_four": NewSubject("subject_four", "teacher_four", true, semesterExample),
+	// 	},
+	// },
 }
