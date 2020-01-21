@@ -14,11 +14,9 @@ func main() {
 		Groups: groups,
 		Teachers: teachers,
 	})
-	PrintJSON(generator.Generate())
-	// generator.BlockTeacher("teacher_two")
-	// PrintJSON(generator.Generate())
-	// generator.UnblockTeacher("teacher_two")
-	// PrintJSON(generator.Generate())
+	result := generator.Generate()
+	PrintJSON(result)
+	generator.WriteXLSX("schedule.xlsx", result)
 }
 
 func PrintJSON(data interface{}) {
@@ -95,7 +93,7 @@ var teachers = map[string]*schedule.Teacher{
 	},
 	"teacher_three": &schedule.Teacher{
 		Cabinets: []string{
-			"301",
+			"304",
 		},
 		Groups: map[string]string{
 			"101": "subject_three",
@@ -126,31 +124,31 @@ var groups = map[string]*schedule.Group{
 			"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
 		},
 	},
-	// "103": &schedule.Group{
-	// 	Name: "103",
-	// 	Quantity: 15,
-	// 	Subjects: map[string]*schedule.Subject{
-	// 		"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
-	// 		"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
-	// 		"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
-	// 	},
-	// },
-	// "104": &schedule.Group{
-	// 	Name: "104",
-	// 	Quantity: 15,
-	// 	Subjects: map[string]*schedule.Subject{
-	// 		"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
-	// 		"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
-	// 		"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
-	// 	},
-	// },
-	// "105": &schedule.Group{
-	// 	Name: "105",
-	// 	Quantity: 15,
-	// 	Subjects: map[string]*schedule.Subject{
-	// 		"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
-	// 		"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
-	// 		"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
-	// 	},
-	// },
+	"103": &schedule.Group{
+		Name: "103",
+		Quantity: 15,
+		Subjects: map[string]*schedule.Subject{
+			"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
+			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+			"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+		},
+	},
+	"104": &schedule.Group{
+		Name: "104",
+		Quantity: 15,
+		Subjects: map[string]*schedule.Subject{
+			"subject_one": NewSubject("subject_one", "teacher_one", true, semesterExample),
+			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+			"subject_three": NewSubject("subject_three", "teacher_three", false, semesterExample),
+		},
+	},
+	"105": &schedule.Group{
+		Name: "105",
+		Quantity: 15,
+		Subjects: map[string]*schedule.Subject{
+			"subject_one": NewSubject("subject_one", "teacher_one", false, semesterExample),
+			"subject_two": NewSubject("subject_two", "teacher_two", false, semesterExample),
+			"subject_three": NewSubject("subject_three", "teacher_three", true, semesterExample),
+		},
+	},
 }
