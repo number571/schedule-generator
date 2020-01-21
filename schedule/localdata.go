@@ -22,17 +22,19 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
 					}
 			}
 
+			// Если между двумя разными подгруппами находятся окна, тогда посчитать сколько пустых окон.
+			// Если их количество = 1, тогда попытаться подставить полную пару под это окно. 
+			// Если не получается, тогда не ставить полную пару.
 			cellSubgroupReserved := false
 			indexNotReserved := uint8(0)
 			cellIsNotReserved := 0
-
 			for i := uint8(0); i < gen.NumTables-1; i++ {
 				if 	gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i) ||
 					gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(A, schedule, i) {
 						if cellIsNotReserved != 0 {
 							if cellIsNotReserved == 1 {
 								lesson = indexNotReserved
-								break
+								goto tryAfter
 							}
 							return true
 						}
