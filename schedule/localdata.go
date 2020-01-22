@@ -1,9 +1,9 @@
 package schedule
 
-func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule) bool {
+func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule) {
 	nextLesson: for lesson := uint8(0); lesson < gen.NumTables; lesson++ {
 		if gen.InBlocked(subject.Teacher) || gen.NotHaveLessons(subgroup, subject, gen.Semester){
-			break
+			break nextLesson
 		}
 
 		isAfter := false
@@ -18,7 +18,7 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
 					gen.cellIsReserved(B, schedule, i+1) && !gen.cellIsReserved(A, schedule, i+1) ||
 					gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(A, schedule, i) && 
 					gen.cellIsReserved(A, schedule, i+1) && !gen.cellIsReserved(B, schedule, i+1) {
-						return true
+						break nextLesson
 					}
 			}
 
@@ -36,7 +36,7 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
 								lesson = indexNotReserved
 								goto tryAfter
 							}
-							return true
+							break nextLesson
 						}
 						cellSubgroupReserved = true
 					}
@@ -139,7 +139,7 @@ tryAfter:
 				}
 				if 	(fullLessons && gen.cellIsReserved(A, schedule, i) && A != subgroup) ||
 					(fullLessons && gen.cellIsReserved(B, schedule, i) && B != subgroup) {
-						return true
+						break nextLesson
 				}
 			}
 		}
@@ -150,7 +150,7 @@ passcheck2:
 			// Если нет возможности добавить новые пары без создания окон, тогда не ставить пары.
 			for i := uint8(0); i < lesson-1; i++ {
 				if 	gen.cellIsReserved(subgroup, schedule, i) && !gen.cellIsReserved(subgroup, schedule, lesson-1) {
-					return false
+					break nextLesson
 				}
 			}
 			// Если существуют пары после назначаемой, из-за которых образуется окно, тогда сместить
@@ -197,8 +197,6 @@ passcheck2:
 		schedule.Table[lesson].Cabinet[subgroup] = cabinet
 		lesson = savedLesson
 	}
-	
-	return false
 }
 
 func (gen *Generator) cellIsReserved(subgroup SubgroupType, schedule *Schedule, lesson uint8) bool {
