@@ -17,17 +17,28 @@ func (gen *Generator) Generate() []*Schedule {
 		subjects := getSubjects(group.Subjects)
 		nextsub: for _, subject := range subjects {
 			if !subject.IsSplited {
-				fmt.Println(group.Name, ": not splited;")
+				fmt.Println(group.Name, subject.Name, ": not splited;")
 				if gen.tryGenerate(ALL, group, subject, schedule) {
 					break nextsub
 				}
 			} else {
-				fmt.Println(group.Name, ": splited;")
-				if gen.tryGenerate(A, group, subject, schedule) {
-					break nextsub
-				}
-				if gen.tryGenerate(B, group, subject, schedule) {
-					break nextsub
+				switch RandSubgroup() {
+				case A:
+					fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
+					if gen.tryGenerate(A, group, subject, schedule) {
+						break nextsub
+					}
+					if gen.tryGenerate(B, group, subject, schedule) {
+						break nextsub
+					}
+				case B:
+					fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
+					if gen.tryGenerate(B, group, subject, schedule) {
+						break nextsub
+					}
+					if gen.tryGenerate(A, group, subject, schedule) {
+						break nextsub
+					}
 				}
 			}
 		}

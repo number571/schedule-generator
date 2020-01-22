@@ -153,6 +153,15 @@ passcheck2:
 					return false
 				}
 			}
+			// Если существуют пары после назначаемой, из-за которых образуется окно, тогда сместить
+			// текущую пару на одну позицию вперёд.
+			for i := lesson+1; i < gen.NumTables-2; i++ {
+				if 	!gen.cellIsReserved(subgroup, schedule, i) && 
+					(gen.cellIsReserved(ALL, schedule, i+1) || gen.cellIsReserved(subgroup, schedule, i+1)) {
+						lesson = savedLesson
+						continue nextLesson
+				}
+			}
 		}
 
 		gen.Reserved.Teachers[subject.Teacher][lesson] = true
