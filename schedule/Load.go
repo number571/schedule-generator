@@ -23,7 +23,7 @@ func readFile(filename string) string {
 	defer file.Close()
 
 	var (
-		buffer []byte = make([]byte, 512)
+		buffer []byte = make([]byte, BUFFER)
 		data string
 	)
 

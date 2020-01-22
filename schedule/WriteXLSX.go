@@ -24,10 +24,10 @@ func (gen *Generator) WriteXLSX(filename string, schedule []*Schedule) error {
         return err
     }
 
-    sheet.SetColWidth(2, len(schedule)*3+1, colWidth)
+    sheet.SetColWidth(2, len(schedule)*3+1, COL_W)
     for i := uint8(0); i < colNum; i++ {
         row[i] = sheet.AddRow()
-        row[i].SetHeight(rowHeight)
+        row[i].SetHeight(ROW_H)
         cell = row[i].AddCell()
         if i == 0 {
             cell.Value = "Пара"
@@ -95,7 +95,6 @@ func (gen *Generator) WriteXLSX(filename string, schedule []*Schedule) error {
 }
 
 func colWidthForCabinets(index int) (int, int, float64) {
-    const colWidth = 10
     var col = (index+1)*3+1
-    return col, col, colWidth
+    return col, col, COL_W_CAB
 }
