@@ -1,0 +1,474 @@
+[
+	{
+		"Name": "101",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "102",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "103",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "104",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "105",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "106",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "107",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "108",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "109",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "110",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": false,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	},
+
+	{
+		"Name": "111",
+		"Quantity": 20,
+		"Subjects": [
+			{
+				"Name": "subject_one",
+				"Teacher": "teacher_one",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_two",
+				"Teacher": "teacher_two",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_three",
+				"Teacher": "teacher_three",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			},
+			{
+				"Name": "subject_four",
+				"Teacher": "teacher_four",
+				"IsSplited": true,
+				"Lessons": {
+					"All": 14,
+					"WeekLessons": 2
+				}
+			}
+		]
+	}
+]

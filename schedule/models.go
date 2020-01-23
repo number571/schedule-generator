@@ -20,7 +20,6 @@ const (
 
 type Generator struct {
 	Day DayType
-	Semester uint8
 	NumTables uint8
 	Groups map[string]*Group
 	Teachers map[string]*Teacher
@@ -50,42 +49,39 @@ type Teacher struct {
 	Groups map[string]string
 }
 
-// type Subject struct {
-// 	Teachers map[string]bool
-// 	Groups map[string]bool
-// }
-
-// type Cabinet struct {
-// 	IsComputer bool
-// 	Places uint16 // free places in cabinet
-// 	Teachers map[string]bool
-// 	Subjects map[string]bool
-// }
-
 type Group struct {
 	Name string
 	Quantity uint16 // students count
 	Subjects map[string]*Subject
 }
 
+type GroupJSON struct {
+	Name string
+	Quantity uint16
+	Subjects []SubjectJSON
+}
+
+type SubjectJSON struct {
+	Name string
+	Teacher string
+	IsSplited bool
+	Lessons LessonsJSON
+}
+
+type LessonsJSON struct {
+	All uint16
+	WeekLessons uint8
+}
+
 type Subject struct {
 	Name string
 	Teacher string
 	IsSplited bool
+	All uint16
 	Subgroup Subgroup
 }
 
 type Subgroup struct {
-	A [2]Semester
-	B [2]Semester
-}
-
-// type Hours struct {
-// 	All uint16
-// 	Semester []Semester
-// }
-
-type Semester struct {
-	All uint16
-	WeekLessons uint8
+	A uint8
+	B uint8
 }

@@ -1,8 +1,13 @@
 package schedule
 
+import (
+	"os"
+	"sort"
+)
+
 func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule) {
 	nextLesson: for lesson := uint8(0); lesson < gen.NumTables; lesson++ {
-		if gen.InBlocked(subject.Teacher) || gen.NotHaveLessons(subgroup, subject, gen.Semester){
+		if gen.InBlocked(subject.Teacher) || gen.NotHaveLessons(subgroup, subject){
 			break nextLesson
 		}
 
@@ -168,11 +173,11 @@ passcheck2:
 		gen.Reserved.Cabinets[cabinet][lesson] = true
 
 		switch subgroup{
-		case A: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A[gen.Semester].WeekLessons -= 1
-		case B: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B[gen.Semester].WeekLessons -= 1
+		case A: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A -= 1
+		case B: gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B -= 1
 		case ALL:
-			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A[gen.Semester].WeekLessons -= 1
-			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B[gen.Semester].WeekLessons -= 1
+			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.A -= 1
+			gen.Groups[group.Name].Subjects[subject.Name].Subgroup.B -= 1
 		}
 
 		if subgroup == ALL {
@@ -251,4 +256,63 @@ func (gen *Generator) cabinetToReserved(cabnum string) {
 		return
 	}
 	gen.Reserved.Cabinets[cabnum] = make([]bool, gen.NumTables)
+}
+
+func getGroups(groups map[string]*Group) []*Group {
+	var list []*Group
+	for _, group := range groups {
+		list = append(list, group)
+	}
+	return Shuffle(list).([]*Group)
+}
+
+func getSubjects(subjects map[string]*Subject) []*Subject {
+	var list []*Subject
+	for _, subject := range subjects {
+		list = append(list, subject)
+	}
+	return Shuffle(list).([]*Subject)
+}
+
+func sortSchedule(schedule []*Schedule) []*Schedule {
+	sort.SliceStable(schedule, func(i, j int) bool {
+		return schedule[i].Group < schedule[j].Group
+	})
+	return schedule
+}
+
+func colWidthForCabinets(index int) (int, int, float64) {
+    var col = (index+1)*3+1
+    return col, col, COL_W_CAB
+}
+
+func readFile(filename string) string {
+	file, err := os.Open(filename)
+	if err != nil {
+		return ""
+	}
+	defer file.Close()
+
+	var (
+		buffer []byte = make([]byte, BUFFER)
+		data string
+	)
+
+	for {
+		length, err := file.Read(buffer)
+		if length == 0 || err != nil { break }
+		data += string(buffer[:length])
+	}
+
+	return data
+}
+
+func writeFile(filename, data string) error {
+	file, err := os.Create(filename)
+	if err != nil {
+		return err
+	}
+	file.WriteString(data)
+	file.Close()
+	return nil
 }
