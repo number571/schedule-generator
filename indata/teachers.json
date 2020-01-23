@@ -1,54 +1,28 @@
-{
-	"teacher_one": {
-		"Cabinets": [
+[
+	{
+		"name": "teacher_one",
+		"cabinets": [
 			"201",
 			"204"
-		],
-		"Groups": {
-			"101": "subject_one",
-			"102": "subject_one",
-			"103": "subject_one",
-			"104": "subject_one",
-			"105": "subject_one"
-		}
+		]
 	},
-	
-	"teacher_two": {
-		"Cabinets": [
+	{
+		"name": "teacher_two",
+		"cabinets": [
 			"301"
-		],
-		"Groups": {
-			"101": "subject_two",
-			"102": "subject_two",
-			"103": "subject_two",
-			"104": "subject_two",
-			"105": "subject_two"
-		}
+		]
 	},
-
-	"teacher_three": {
-		"Cabinets": [
-			"304"
-		],
-		"Groups": {
-			"101": "subject_three",
-			"102": "subject_three",
-			"103": "subject_three",
-			"104": "subject_three",
-			"105": "subject_three"
-		}
+	{
+		"name": "teacher_three",
+		"cabinets": [
+			"401"
+		]
 	},
-
-	"teacher_four": {
-		"Cabinets": [
-			"305"
-		],
-		"Groups": {
-			"101": "subject_four",
-			"102": "subject_four",
-			"103": "subject_four",
-			"104": "subject_four",
-			"105": "subject_four"
-		}
+	{
+		"name": "teacher_four",
+		"cabinets": [
+			"101",
+			"102"
+		]
 	}
-}
+]

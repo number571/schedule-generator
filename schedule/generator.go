@@ -73,9 +73,12 @@ func ReadGroups(filename string) map[string]*Group {
 				IsSplited: sb.IsSplited,
 				All: sb.Lessons.All,
 				Subgroup: Subgroup{
-					A: sb.Lessons.WeekLessons,
-					B: sb.Lessons.WeekLessons,
+					A: sb.Lessons.Week,
+					B: sb.Lessons.Week,
 				},
+			}
+			if gr.Quantity <= WITHOUT_SUBGROUPS {
+				groups[gr.Name].Subjects[sb.Name].IsSplited = false
 			}
 		}
 	}
@@ -83,11 +86,20 @@ func ReadGroups(filename string) map[string]*Group {
 }
 
 func ReadTeachers(filename string) map[string]*Teacher {
-	var teachers = make(map[string]*Teacher)
+	var (
+		teachers = make(map[string]*Teacher)
+		teachersList []TeacherJSON
+	)
 	data := readFile(filename)
-	err := json.Unmarshal([]byte(data), &teachers)
+	err := json.Unmarshal([]byte(data), &teachersList)
 	if err != nil {
+		fmt.Println(err)
 		return nil
+	}
+	for _, tc := range teachersList {
+		teachers[tc.Name] = &Teacher{
+			Cabinets: tc.Cabinets,
+		}
 	}
 	return teachers
 }
@@ -187,7 +199,7 @@ func WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, numtable 
             
             cell = row[j+1].AddCell()
             if trow.Subject[0] == trow.Subject[1] {
-                cell.Value = trow.Teacher[0]
+                cell.Value = trow.Subject[0]
             } else {
                 if trow.Subject[0] != "" {
                     cell.Value = trow.Subject[0] + " (A)"

@@ -224,6 +224,9 @@ func (gen *Generator) cellIsReserved(subgroup SubgroupType, schedule *Schedule, 
 
 func (gen *Generator) cabinetIsReserved(teacher string, lesson uint8, cabinet *string) bool {
 	var result = true
+	if !gen.InTeachers(teacher) {
+		return result
+	}
 	for _, cabnum := range gen.Teachers[teacher].Cabinets {
 		gen.cabinetToReserved(cabnum)
 		if _, ok := gen.Reserved.Cabinets[cabnum]; ok {

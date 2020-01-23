@@ -46,31 +46,13 @@ type Row struct {
 
 type Teacher struct {
 	Cabinets []string
-	Groups map[string]string
+	// Groups map[string]string
 }
 
 type Group struct {
 	Name string
 	Quantity uint16 // students count
 	Subjects map[string]*Subject
-}
-
-type GroupJSON struct {
-	Name string
-	Quantity uint16
-	Subjects []SubjectJSON
-}
-
-type SubjectJSON struct {
-	Name string
-	Teacher string
-	IsSplited bool
-	Lessons LessonsJSON
-}
-
-type LessonsJSON struct {
-	All uint16
-	WeekLessons uint8
 }
 
 type Subject struct {
@@ -84,4 +66,27 @@ type Subject struct {
 type Subgroup struct {
 	A uint8
 	B uint8
+}
+
+type TeacherJSON struct {
+	Name string `json:"name"`
+	Cabinets []string `json:"cabinets"`
+}
+
+type GroupJSON struct {
+	Name string `json:"name"`
+	Quantity uint16 `json:"quantity"`
+	Subjects []SubjectJSON `json:"subjects"`
+}
+
+type SubjectJSON struct {
+	Name string `json:"name"`
+	Teacher string `json:"teacher"`
+	IsSplited bool `json:"is_splited"`
+	Lessons LessonsJSON `json:"lessons"`
+}
+
+type LessonsJSON struct {
+	All uint16 `json:"all"`
+	Week uint8 `json:"week"`
 }

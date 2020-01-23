@@ -1,472 +1,472 @@
 [
 	{
-		"Name": "101",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "101",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "102",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "102",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "103",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "103",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "104",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "104",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "105",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "105",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "106",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "106",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "107",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "107",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "108",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "108",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "109",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "109",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "110",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "110",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": false,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": false,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
 	},
 
 	{
-		"Name": "111",
-		"Quantity": 20,
-		"Subjects": [
+		"name": "111",
+		"quantity": 20,
+		"subjects": [
 			{
-				"Name": "subject_one",
-				"Teacher": "teacher_one",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_two",
-				"Teacher": "teacher_two",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_two",
+				"teacher": "teacher_two",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_three",
-				"Teacher": "teacher_three",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_three",
+				"teacher": "teacher_three",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			},
 			{
-				"Name": "subject_four",
-				"Teacher": "teacher_four",
-				"IsSplited": true,
-				"Lessons": {
-					"All": 14,
-					"WeekLessons": 2
+				"name": "subject_four",
+				"teacher": "teacher_four",
+				"is_splited": true,
+				"lessons": {
+					"all": 14,
+					"week": 2
 				}
 			}
 		]
