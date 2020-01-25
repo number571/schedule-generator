@@ -39,8 +39,8 @@ type Schedule struct {
 }
 
 type Row struct {
-	Teacher [2]string
 	Subject [2]string
+	Teacher [2]string
 	Cabinet [2]string
 }
 
@@ -58,6 +58,7 @@ type Group struct {
 type Subject struct {
 	Name string
 	Teacher string
+	Teacher2 string
 	IsSplited bool
 	All uint16
 	Subgroup Subgroup

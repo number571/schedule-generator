@@ -1,28 +1,38 @@
 [
 	{
+		"name": "TEACHER_X",
+		"cabinets": [
+			"302"
+		]
+	},
+	{
+		"name": "TEACHER_Y",
+		"cabinets": [
+			"303"
+		]
+	},
+	{
 		"name": "teacher_one",
 		"cabinets": [
-			"201",
-			"204"
+			"201"
 		]
 	},
 	{
 		"name": "teacher_two",
 		"cabinets": [
-			"301"
+			"202"
 		]
 	},
 	{
 		"name": "teacher_three",
 		"cabinets": [
-			"401"
+			"203"
 		]
 	},
 	{
 		"name": "teacher_four",
 		"cabinets": [
-			"101",
-			"102"
+			"204"
 		]
 	}
 ]

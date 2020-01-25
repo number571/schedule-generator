@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	INDATA = "indata/"
-	OUTDATA = "outdata/"
+	INDATA = "input/"
+	OUTDATA = "output/"
 	XLSX = "schedule.xlsx"
 )
 
@@ -24,11 +24,12 @@ func main() {
 	})
 	os.Mkdir(OUTDATA, 0777)
 	file, name := schedule.CreateXLSX(OUTDATA + XLSX)
-	for iter := 1; iter <= 8; iter++ {
+	for iter := 1; iter <= 3; iter++ {
+		result := generator.Generate()
 		schedule.WriteXLSX(
 			file,
 			name,
-			generator.Generate(),
+			result,
 			generator.NumTables,
 			iter,
 		)
