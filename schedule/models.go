@@ -20,7 +20,7 @@ const (
 
 type Generator struct {
 	Day DayType
-	NumTables uint8
+	NumTables uint
 	Groups map[string]*Group
 	Teachers map[string]*Teacher
 	Blocked map[string]bool
@@ -39,19 +39,18 @@ type Schedule struct {
 }
 
 type Row struct {
-	Subject [2]string
-	Teacher [2]string
-	Cabinet [2]string
+	Subject [ALL]string
+	Teacher [ALL]string
+	Cabinet [ALL]string
 }
 
 type Teacher struct {
 	Cabinets []string
-	// Groups map[string]string
 }
 
 type Group struct {
 	Name string
-	Quantity uint16 // students count
+	Quantity uint // students count
 	Subjects map[string]*Subject
 }
 
@@ -59,14 +58,15 @@ type Subject struct {
 	Name string
 	Teacher string
 	Teacher2 string
-	IsSplited bool
-	All uint16
-	Subgroup Subgroup
+	SaveWeek uint
+	Theory uint
+	Practice Subgroup
+	WeekLessons Subgroup
 }
 
 type Subgroup struct {
-	A uint8
-	B uint8
+	A uint
+	B uint
 }
 
 type TeacherJSON struct {
@@ -76,18 +76,18 @@ type TeacherJSON struct {
 
 type GroupJSON struct {
 	Name string `json:"name"`
-	Quantity uint16 `json:"quantity"`
+	Quantity uint `json:"quantity"`
 	Subjects []SubjectJSON `json:"subjects"`
 }
 
 type SubjectJSON struct {
 	Name string `json:"name"`
 	Teacher string `json:"teacher"`
-	IsSplited bool `json:"is_splited"`
 	Lessons LessonsJSON `json:"lessons"`
 }
 
 type LessonsJSON struct {
-	All uint16 `json:"all"`
-	Week uint8 `json:"week"`
+	Theory uint `json:"theory"`
+	Practice uint `json:"practice"`
+	Week uint `json:"week"`
 }

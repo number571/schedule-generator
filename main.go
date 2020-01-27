@@ -6,6 +6,8 @@ package main
 
 import (
 	"os"
+	"fmt"
+	"encoding/json"
 	"./schedule"
 )
 
@@ -17,14 +19,14 @@ const (
 
 func main() {
 	var generator = schedule.NewGenerator(&schedule.Generator{
-		Day: schedule.MONDAY,
+		Day: schedule.SATURDAY,
 		NumTables: 11,
 		Groups: schedule.ReadGroups(INDATA + "groups.json"),
 		Teachers: schedule.ReadTeachers(INDATA + "teachers.json"),
 	})
 	os.Mkdir(OUTDATA, 0777)
 	file, name := schedule.CreateXLSX(OUTDATA + XLSX)
-	for iter := 1; iter <= 3; iter++ {
+	for iter := 1; iter <= 5; iter++ {
 		result := generator.Generate()
 		schedule.WriteXLSX(
 			file,
@@ -34,4 +36,10 @@ func main() {
 			iter,
 		)
 	}
+	// printJSON(generator)
+}
+
+func printJSON(data interface{}) {
+	jsonData, _ := json.MarshalIndent(data, "", "\t")
+	fmt.Println(string(jsonData))
 }

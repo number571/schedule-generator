@@ -2,9 +2,7 @@ package schedule
 
 import (
     "fmt"
-    "errors"
     "strconv"
-    "math/rand"
     "encoding/json"
     "github.com/tealeg/xlsx"
 )
@@ -31,37 +29,6 @@ func (gen *Generator) NewSchedule(group string) *Schedule {
     }
 }
 
-func (gen *Generator) NotHaveLessons(subgroup SubgroupType, subject *Subject) bool {
-    switch subgroup {
-    case A:
-        if subject.Subgroup.A == 0 {
-            return true
-        }
-    case B:
-        if subject.Subgroup.B == 0 {
-            return true
-        }
-    case ALL:
-        if subject.Subgroup.A == 0 && subject.Subgroup.B == 0 {
-            return true
-        }
-    }
-    return false
-}
-
-func (gen *Generator) IsDoubleLesson(group string, subject string) bool {
-    if !gen.InGroups(group) {
-        return false
-    }
-    if _, ok := gen.Groups[group].Subjects[subject]; !ok {
-        return false
-    }
-    if gen.Groups[group].Subjects[subject].Teacher2 == "" {
-        return false
-    }
-    return true
-}
-
 func ReadGroups(filename string) map[string]*Group {
     var (
         groups = make(map[string]*Group)
@@ -81,21 +48,21 @@ func ReadGroups(filename string) map[string]*Group {
         for _, sb := range gr.Subjects {
             if _, ok := groups[gr.Name].Subjects[sb.Name]; ok {
                 groups[gr.Name].Subjects[sb.Name].Teacher2 = sb.Teacher
-                goto createpass
+                continue
             }
             groups[gr.Name].Subjects[sb.Name] = &Subject{
                 Name: sb.Name,
                 Teacher: sb.Teacher,
-                IsSplited: sb.IsSplited,
-                All: sb.Lessons.All,
-                Subgroup: Subgroup{
+                SaveWeek: sb.Lessons.Week,
+                Theory: sb.Lessons.Theory,
+                Practice: Subgroup{
+                    A: sb.Lessons.Practice,
+                    B: sb.Lessons.Practice,
+                },
+                WeekLessons: Subgroup{
                     A: sb.Lessons.Week,
                     B: sb.Lessons.Week,
                 },
-            }
-createpass:
-            if gr.Quantity <= WITHOUT_SUBGROUPS {
-                groups[gr.Name].Subjects[sb.Name].IsSplited = false
             }
         }
     }
@@ -110,7 +77,6 @@ func ReadTeachers(filename string) map[string]*Teacher {
     data := readFile(filename)
     err := json.Unmarshal([]byte(data), &teachersList)
     if err != nil {
-        fmt.Println(err)
         return nil
     }
     for _, tc := range teachersList {
@@ -126,33 +92,42 @@ func (gen *Generator) Generate() []*Schedule {
     groups := getGroups(gen.Groups)
     for _, group := range groups {
         var schedule = gen.NewSchedule(group.Name)
+        subjects := getSubjects(group.Subjects)
         if gen.Day == SUNDAY {
             list = append(list, schedule)
+            for _, subject := range subjects {
+                saved := gen.Groups[group.Name].Subjects[subject.Name].SaveWeek
+                gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.A = saved
+                gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.B = saved
+            }
             continue
         }
-        subjects := getSubjects(group.Subjects)
         for _, subject := range subjects {
-            if !subject.IsSplited || gen.IsDoubleLesson(group.Name, subject.Name) {
+            // switch {
+            // case gen.haveTheoreticalLessons(subject):
                 if DEBUG {
                     fmt.Println(group.Name, subject.Name, ": not splited;")
                 }
                 gen.tryGenerate(ALL, group, subject, schedule)
-            } else {
-                switch RandSubgroup() {
-                case A:
-                    if DEBUG {
-                        fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
+                if !gen.haveTheoreticalLessons(subject) {
+                    switch RandSubgroup() {
+                    case A:
+                        if DEBUG {
+                            fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
+                        }
+                        gen.tryGenerate(A, group, subject, schedule)
+                        gen.tryGenerate(B, group, subject, schedule)
+                    case B:
+                        if DEBUG {
+                            fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
+                        }
+                        gen.tryGenerate(B, group, subject, schedule)
+                        gen.tryGenerate(A, group, subject, schedule)
                     }
-                    gen.tryGenerate(A, group, subject, schedule)
-                    gen.tryGenerate(B, group, subject, schedule)
-                case B:
-                    if DEBUG {
-                        fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
-                    }
-                    gen.tryGenerate(B, group, subject, schedule)
-                    gen.tryGenerate(A, group, subject, schedule)
                 }
-            }
+            // case gen.havePracticalLessons(ALL, subject):
+
+            // }
         }
         list = append(list, schedule)
     }
@@ -162,7 +137,20 @@ func (gen *Generator) Generate() []*Schedule {
     return sortSchedule(list)
 }
 
-func WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, numtable uint8, iter int) error {
+func CreateXLSX(filename string) (*xlsx.File, string) {
+    file := xlsx.NewFile()
+    _, err := file.AddSheet("Init")
+    if err != nil {
+        return nil, ""
+    }
+    err = file.Save(filename)
+    if err != nil {
+        return nil, ""
+    }
+    return file, filename
+}
+
+func WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, numtable uint, iter int) error {
     const (
         colWidth = 30
         rowHeight = 30
@@ -180,7 +168,7 @@ func WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, numtable 
     }
 
     sheet.SetColWidth(2, len(schedule)*3+1, COL_W)
-    for i := uint8(0); i < colNum; i++ {
+    for i := uint(0); i < colNum; i++ {
         row[i] = sheet.AddRow()
         row[i].SetHeight(ROW_H)
         cell = row[i].AddCell()
@@ -212,39 +200,39 @@ func WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, numtable 
         for j, trow := range sch.Table {
 
             cell = row[j+2].AddCell()
-            if trow.Subject[0] == trow.Subject[1] {
-                cell.Value = trow.Subject[0]
+            if trow.Subject[A] == trow.Subject[B] {
+                cell.Value = trow.Subject[A]
             } else {
-                if trow.Subject[0] != "" {
-                    cell.Value = trow.Subject[0] + " (A)"
+                if trow.Subject[A] != "" {
+                    cell.Value = trow.Subject[A] + " (A)"
                 }
-                if trow.Subject[1] != "" {
-                    cell.Value += "\n" + trow.Subject[1] + " (B)"
+                if trow.Subject[B] != "" {
+                    cell.Value += "\n" + trow.Subject[B] + " (B)"
                 }
             }
 
             cell = row[j+2].AddCell()
-            if trow.Teacher[0] == trow.Teacher[1] {
-                cell.Value = trow.Teacher[0]
+            if trow.Teacher[A] == trow.Teacher[B] {
+                cell.Value = trow.Teacher[A]
             } else {
-                if trow.Teacher[0] != "" {
-                    cell.Value = trow.Teacher[0]
+                if trow.Teacher[A] != "" {
+                    cell.Value = trow.Teacher[A]
                 }
-                if trow.Teacher[1] != "" {
-                    cell.Value += "\n" + trow.Teacher[1]
+                if trow.Teacher[B] != "" {
+                    cell.Value += "\n" + trow.Teacher[B]
                 }
             }
 
             sheet.SetColWidth(colWidthForCabinets(i))
             cell = row[j+2].AddCell()
-            if trow.Cabinet[0] == trow.Cabinet[1] {
-                cell.Value = trow.Cabinet[0]
+            if trow.Cabinet[A] == trow.Cabinet[B] {
+                cell.Value = trow.Cabinet[A]
             } else {
-                if trow.Cabinet[0] != "" {
-                    cell.Value = trow.Cabinet[0]
+                if trow.Cabinet[A] != "" {
+                    cell.Value = trow.Cabinet[A]
                 }
-                if trow.Cabinet[1] != "" {
-                    cell.Value += "\n" + trow.Cabinet[1]
+                if trow.Cabinet[B] != "" {
+                    cell.Value += "\n" + trow.Cabinet[B]
                 }
             }
         }
@@ -256,56 +244,6 @@ func WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, numtable 
     }
 
     return nil
-}
-
-func Shuffle(slice interface{}) interface{}{
-    switch slice.(type) {
-    case []*Group:
-        result := slice.([]*Group)
-        for i := len(result)-1; i > 0; i-- {
-            j := rand.Intn(i+1)
-            result[i], result[j] = result[j], result[i]
-        }
-        return result
-    case []*Subject:
-        result := slice.([]*Subject)
-        for i := len(result)-1; i > 0; i-- {
-            j := rand.Intn(i+1)
-            result[i], result[j] = result[j], result[i]
-        }
-        return result
-    }
-    return nil
-}
-
-func (gen *Generator) SubjectInGroup(subject string, group string) bool {
-    if !gen.InGroups(group) {
-        return false
-    }
-    if _, ok := gen.Groups[group].Subjects[subject]; !ok {
-        return false
-    }
-    return true
-}
-
-func (gen *Generator) UnblockTeacher(teacher string) error {
-    if !gen.InBlocked(teacher) {
-        return errors.New("teacher undefined")
-    }
-    delete(gen.Blocked, teacher)
-    return nil
-}
-
-func WriteJSON(filename string, data interface{}) error {
-    return writeFile(filename, string(packJSON(data)))
-}
-
-func packJSON(data interface{}) []byte {
-    jsonData, err := json.MarshalIndent(data, "", "\t")
-    if err != nil {
-        return nil
-    }
-    return jsonData
 }
 
 func RandSubgroup() SubgroupType {
@@ -322,49 +260,6 @@ func Load(filename string) *Generator {
     return generator
 }
 
-func (gen *Generator) InBlocked(teacher string) bool {
-    if _, ok := gen.Blocked[teacher]; !ok {
-        return false
-    }
-    return true
-}
-
-func (gen *Generator) InGroups(group string) bool {
-    if _, ok := gen.Groups[group]; !ok {
-        return false
-    }
-    return true
-}
-
-func (gen *Generator) InTeachers(teacher string) bool {
-    if _, ok := gen.Teachers[teacher]; !ok {
-        return false
-    }
-    return true
-}
-
 func (gen *Generator) Dump(filename string) error {
-    return WriteJSON(filename, gen)
-}
-
-func CreateXLSX(filename string) (*xlsx.File, string) {
-    file := xlsx.NewFile()
-    _, err := file.AddSheet("Init")
-    if err != nil {
-        return nil, ""
-    }
-    err = file.Save(filename)
-    if err != nil {
-        return nil, ""
-    }
-    return file, filename
-}
-
-
-func (gen *Generator) BlockTeacher(teacher string) error {
-    if !gen.InTeachers(teacher) {
-        return errors.New("teacher undefined")
-    }
-    gen.Blocked[teacher] = true
-    return nil
+    return writeJSON(filename, gen)
 }

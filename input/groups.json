@@ -4,300 +4,95 @@
 		"quantity": 20,
 		"subjects": [
 			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_X",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_Y",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
 				"name": "subject_one",
 				"teacher": "teacher_one",
-				"is_splited": false,
 				"lessons": {
-					"all": 14,
-					"week": 1
+					"theory": 2,
+					"practice": 1,
+					"week": 3
 				}
 			},
 			{
 				"name": "subject_two",
 				"teacher": "teacher_two",
-				"is_splited": false,
 				"lessons": {
-					"all": 14,
-					"week": 1
+					"theory": 2,
+					"practice": 2,
+					"week": 3
 				}
 			},
 			{
 				"name": "subject_three",
 				"teacher": "teacher_three",
-				"is_splited": false,
 				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
+					"theory": 1,
+					"practice": 2,
 					"week": 1
 				}
 			}
 		]
 	},
-
 	{
 		"name": "102",
 		"quantity": 20,
 		"subjects": [
 			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_X",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_Y",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
 				"name": "subject_one",
 				"teacher": "teacher_one",
-				"is_splited": true,
 				"lessons": {
-					"all": 14,
-					"week": 1
+					"theory": 2,
+					"practice": 1,
+					"week": 3
 				}
 			},
 			{
 				"name": "subject_two",
 				"teacher": "teacher_two",
-				"is_splited": false,
 				"lessons": {
-					"all": 14,
-					"week": 1
+					"theory": 2,
+					"practice": 2,
+					"week": 3
 				}
 			},
 			{
 				"name": "subject_three",
 				"teacher": "teacher_three",
-				"is_splited": false,
 				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
+					"theory": 1,
+					"practice": 2,
 					"week": 1
 				}
 			}
 		]
 	},
-
 	{
 		"name": "103",
 		"quantity": 20,
 		"subjects": [
 			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_X",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_Y",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
 				"name": "subject_one",
 				"teacher": "teacher_one",
-				"is_splited": false,
 				"lessons": {
-					"all": 14,
-					"week": 1
+					"theory": 2,
+					"practice": 1,
+					"week": 3
 				}
 			},
 			{
 				"name": "subject_two",
 				"teacher": "teacher_two",
-				"is_splited": true,
 				"lessons": {
-					"all": 14,
-					"week": 1
+					"theory": 2,
+					"practice": 2,
+					"week": 3
 				}
 			},
 			{
 				"name": "subject_three",
 				"teacher": "teacher_three",
-				"is_splited": false,
 				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			}
-		]
-	},
-
-	{
-		"name": "104",
-		"quantity": 20,
-		"subjects": [
-			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_X",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_Y",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_one",
-				"teacher": "teacher_one",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_two",
-				"teacher": "teacher_two",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_three",
-				"teacher": "teacher_three",
-				"is_splited": true,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			}
-		]
-	},
-
-	{
-		"name": "105",
-		"quantity": 20,
-		"subjects": [
-			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_X",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "ENGLISH",
-				"teacher": "TEACHER_Y",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_one",
-				"teacher": "teacher_one",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_two",
-				"teacher": "teacher_two",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_three",
-				"teacher": "teacher_three",
-				"is_splited": false,
-				"lessons": {
-					"all": 14,
-					"week": 1
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"is_splited": true,
-				"lessons": {
-					"all": 14,
+					"theory": 1,
+					"practice": 2,
 					"week": 1
 				}
 			}
