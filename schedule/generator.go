@@ -87,11 +87,6 @@ func ReadTeachers(filename string) map[string]*Teacher {
     return teachers
 }
 
-func printJSON(data interface{}) {
-    jsonData, _ := json.MarshalIndent(data, "", "\t")
-    fmt.Println(string(jsonData))
-}
-
 func (gen *Generator) Generate() []*Schedule {
     var list []*Schedule
     groups := getGroups(gen.Groups)
@@ -108,26 +103,36 @@ func (gen *Generator) Generate() []*Schedule {
             continue
         }
         for _, subject := range subjects {
-            if DEBUG {
-                fmt.Println(group.Name, subject.Name, ": not splited;")
-            }
-            gen.tryGenerate(ALL, group, subject, schedule)
-
+            switch {
+            case gen.haveTheoreticalLessons(subject):
+                if DEBUG {
+                    fmt.Println(group.Name, subject.Name, ": not splited THEORETICAL;")
+                }
+                gen.tryGenerate(ALL, group, subject, schedule, THEORETICAL)
             // Практические пары начинаются только после завершения всех теоретических.
-            if !gen.haveTheoreticalLessons(subject) {
-                switch RandSubgroup() {
-                case A:
+            default:
+                // Если подгруппа неделимая, тогда провести практику в виде полной пары.
+                // Иначе разделить практику на две подгруппы.
+                if !gen.withSubgroups(group.Name) {
                     if DEBUG {
-                        fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
+                        fmt.Println(group.Name, subject.Name, ": not splited PRACTICAL;")
                     }
-                    gen.tryGenerate(A, group, subject, schedule)
-                    gen.tryGenerate(B, group, subject, schedule)
-                case B:
-                    if DEBUG {
-                        fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
+                    gen.tryGenerate(ALL, group, subject, schedule, PRACTICAL)
+                } else {
+                    switch RandSubgroup() {
+                    case A:
+                        if DEBUG {
+                            fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
+                        }
+                        gen.tryGenerate(A, group, subject, schedule, PRACTICAL)
+                        gen.tryGenerate(B, group, subject, schedule, PRACTICAL)
+                    case B:
+                        if DEBUG {
+                            fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
+                        }
+                        gen.tryGenerate(B, group, subject, schedule, PRACTICAL)
+                        gen.tryGenerate(A, group, subject, schedule, PRACTICAL)
                     }
-                    gen.tryGenerate(B, group, subject, schedule)
-                    gen.tryGenerate(A, group, subject, schedule)
                 }
             }
         }
@@ -196,7 +201,7 @@ func (gen *Generator) WriteXLSX(file *xlsx.File, filename string, schedule []*Sc
             cell.Value = "Пара"
             continue
         }
-        cell.Value = strconv.Itoa(int(i))
+        cell.Value = strconv.Itoa(int(i-1))
     }
 
     for i, sch := range schedule {

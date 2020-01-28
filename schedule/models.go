@@ -18,6 +18,12 @@ const (
 	ALL SubgroupType = 2
 )
 
+type SubjectType uint8
+const (
+	THEORETICAL	SubjectType = 0
+	PRACTICAL 	SubjectType = 1
+)
+
 type Generator struct {
 	Day DayType
 	NumTables uint

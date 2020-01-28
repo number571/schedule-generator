@@ -13,16 +13,16 @@ func init() {
     rand.Seed(time.Now().UnixNano())
 }
 
-func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule) {
+func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule, subjtype SubjectType) {
     nextLesson: for lesson := uint(0); lesson < gen.NumTables; lesson++ {
 
         // Если это полная группа и у неё не осталось теоретических занятий, тогда пропустить этот предмет. 
-        if subgroup == ALL && !gen.haveTheoreticalLessons(subject) {
+        if subjtype == THEORETICAL && !gen.haveTheoreticalLessons(subject) {
             break nextLesson
         }
 
         // Если это подгруппа и у неё не осталось практических занятий, тогда пропустить этот предмет.
-        if subgroup != ALL && !gen.havePracticalLessons(subgroup, subject) {
+        if subjtype == PRACTICAL && !gen.havePracticalLessons(subgroup, subject) {
             break nextLesson
         }
 
@@ -85,8 +85,7 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
         default:
             // "Подтягивать" неполные пары к уже существующим [перед].
             for i := uint(0); i < gen.NumTables-1; i++ {
-                if  (gen.cellIsReserved(ALL, schedule, i+1) || gen.cellIsReserved(subgroup, schedule, i+1)) &&
-                    !gen.cellIsReserved(subgroup, schedule, i) {
+                if  !gen.cellIsReserved(subgroup, schedule, i) && gen.cellIsReserved(subgroup, schedule, i+1) {
                         lesson = i
                         break
                     }
@@ -121,12 +120,17 @@ tryAfter:
             cabinet = ""
             cabinet2 = ""
         )
+        // Если ячейка уже зарезервирована или учитель занят, или кабинет зарезервирован, или
+        // если это полная пара и ячейка занята либо первой, либо второй подгруппой, или
+        // если это двойная пара и кабинеты второго учителя зарезервированы, или 
+        // если это двойная пара и второй учитель занят: попытаться сдвинуть пары к уже существующим.
+        // Если не получается, тогда не ставить этот урок.
         if  gen.cellIsReserved(subgroup, schedule, lesson) || 
             gen.teacherIsReserved(subject.Teacher, lesson) || 
             gen.cabinetIsReserved(subject.Teacher, lesson, &cabinet) || 
             (subgroup == ALL && (gen.cellIsReserved(A, schedule, lesson) || gen.cellIsReserved(B, schedule, lesson))) ||
-            (gen.isDoubleLesson(group.Name, subject.Name) && gen.cabinetIsReserved(subject.Teacher2, lesson, &cabinet2)) ||
-            (gen.isDoubleLesson(group.Name, subject.Name) && gen.teacherIsReserved(subject.Teacher2, lesson)){
+            (gen.withSubgroups(group.Name) && gen.isDoubleLesson(group.Name, subject.Name) && gen.cabinetIsReserved(subject.Teacher2, lesson, &cabinet2)) ||
+            (gen.withSubgroups(group.Name) && gen.isDoubleLesson(group.Name, subject.Name) && gen.teacherIsReserved(subject.Teacher2, lesson)) {
                 if isAfter {
                     break nextLesson
                 }
@@ -137,9 +141,17 @@ tryAfter:
                 continue nextLesson
         }
 
-        // Full day = max 6 couples.
-        if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && lesson == 6 {
+        // Полный день - максимум 6 пар.
+        // lesson начинается с нуля!
+        if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && lesson >= 6 {
             break nextLesson
+        }
+
+        // В среду и субботу - 5-6 пары должны быть свободны.
+        // lesson начинается с нуля!
+        if (gen.Day == WEDNESDAY || gen.Day == SATURDAY) && (lesson == 4 || lesson == 5) {
+            lesson = savedLesson // Возобновить сохранённое занятие.
+            continue nextLesson // Перейти к следующей ячейке.
         }
 
         // [ II ] Вторая проверка.
@@ -178,20 +190,21 @@ tryAfter:
 
 passcheck2:
         // [ III ] Третья проверка.
+        // Если нет возможности добавить новые пары без создания окон, тогда не ставить пары.
         if lesson > 1 {
-            // Если нет возможности добавить новые пары без создания окон, тогда не ставить пары.
-            for i := uint(0); i < lesson-1; i++ {
-                if  gen.cellIsReserved(subgroup, schedule, i) && !gen.cellIsReserved(subgroup, schedule, lesson-1) {
-                    break nextLesson
+            switch subgroup {
+            case ALL:
+                for i := uint(0); i < lesson-1; i++ {
+                    if  (gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(A, schedule, lesson-1)) || 
+                        (gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(B, schedule, lesson-1)) {
+                            break nextLesson
+                    }
                 }
-            }
-            // Если существуют пары после назначаемой, из-за которых образуется окно, тогда сместить
-            // текущую пару на одну позицию вперёд.
-            for i := lesson+1; i < gen.NumTables-2; i++ {
-                if  !gen.cellIsReserved(subgroup, schedule, i) && 
-                    (gen.cellIsReserved(ALL, schedule, i+1) || gen.cellIsReserved(subgroup, schedule, i+1)) {
-                        lesson = savedLesson
-                        continue nextLesson
+            default:
+                for i := uint(0); i < lesson-1; i++ {
+                    if  gen.cellIsReserved(subgroup, schedule, i) && !gen.cellIsReserved(subgroup, schedule, lesson-1) {
+                        break nextLesson
+                    }
                 }
             }
         }
@@ -200,16 +213,22 @@ passcheck2:
         gen.Reserved.Cabinets[cabinet][lesson] = true
 
         switch subgroup {
-        case A: 
+        case A:
             gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.A -= 1
             gen.Groups[group.Name].Subjects[subject.Name].Practice.A -= 1
-        case B: 
+        case B:
             gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.B -= 1
             gen.Groups[group.Name].Subjects[subject.Name].Practice.B -= 1
         case ALL:
             gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.A -= 1
             gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.B -= 1
-            gen.Groups[group.Name].Subjects[subject.Name].Theory -= 1
+            switch subjtype {
+            case THEORETICAL:
+                gen.Groups[group.Name].Subjects[subject.Name].Theory -= 1
+            case PRACTICAL:
+                gen.Groups[group.Name].Subjects[subject.Name].Practice.A -= 1
+                gen.Groups[group.Name].Subjects[subject.Name].Practice.B -= 1
+            }
         }
 
         if subgroup == ALL {
@@ -225,7 +244,8 @@ passcheck2:
                 cabinet,
                 cabinet,
             }
-            if gen.isDoubleLesson(group.Name, subject.Name) {
+            // Если это двойная пара и группа делимая, тогда поставить пару с разными преподавателями.
+            if gen.isDoubleLesson(group.Name, subject.Name) && gen.withSubgroups(group.Name) {
                 gen.Reserved.Teachers[subject.Teacher2][lesson] = true
                 schedule.Table[lesson].Teacher[B] = subject.Teacher2
                 schedule.Table[lesson].Cabinet[B] = cabinet2
@@ -239,6 +259,13 @@ passcheck2:
         schedule.Table[lesson].Cabinet[subgroup] = cabinet
         lesson = savedLesson
     }
+}
+
+func (gen *Generator) withSubgroups(group string) bool {
+    if gen.Groups[group].Quantity > MAX_COUNT_WITHOUT_SUBGROUPS {
+        return true
+    }
+    return false
 }
 
 func (gen *Generator) blockTeacher(teacher string) error {

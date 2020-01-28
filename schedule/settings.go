@@ -6,8 +6,7 @@ const (
 )
 
 const (
-	// If group quantity <= 16
-	WITHOUT_SUBGROUPS = 16
+	MAX_COUNT_WITHOUT_SUBGROUPS = 16
 )
 
 // For XLSX.
