@@ -87,6 +87,11 @@ func ReadTeachers(filename string) map[string]*Teacher {
     return teachers
 }
 
+func printJSON(data interface{}) {
+    jsonData, _ := json.MarshalIndent(data, "", "\t")
+    fmt.Println(string(jsonData))
+}
+
 func (gen *Generator) Generate() []*Schedule {
     var list []*Schedule
     groups := getGroups(gen.Groups)
@@ -103,31 +108,28 @@ func (gen *Generator) Generate() []*Schedule {
             continue
         }
         for _, subject := range subjects {
-            // switch {
-            // case gen.haveTheoreticalLessons(subject):
-                if DEBUG {
-                    fmt.Println(group.Name, subject.Name, ": not splited;")
-                }
-                gen.tryGenerate(ALL, group, subject, schedule)
-                if !gen.haveTheoreticalLessons(subject) {
-                    switch RandSubgroup() {
-                    case A:
-                        if DEBUG {
-                            fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
-                        }
-                        gen.tryGenerate(A, group, subject, schedule)
-                        gen.tryGenerate(B, group, subject, schedule)
-                    case B:
-                        if DEBUG {
-                            fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
-                        }
-                        gen.tryGenerate(B, group, subject, schedule)
-                        gen.tryGenerate(A, group, subject, schedule)
-                    }
-                }
-            // case gen.havePracticalLessons(ALL, subject):
+            if DEBUG {
+                fmt.Println(group.Name, subject.Name, ": not splited;")
+            }
+            gen.tryGenerate(ALL, group, subject, schedule)
 
-            // }
+            // Практические пары начинаются только после завершения всех теоретических.
+            if !gen.haveTheoreticalLessons(subject) {
+                switch RandSubgroup() {
+                case A:
+                    if DEBUG {
+                        fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
+                    }
+                    gen.tryGenerate(A, group, subject, schedule)
+                    gen.tryGenerate(B, group, subject, schedule)
+                case B:
+                    if DEBUG {
+                        fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
+                    }
+                    gen.tryGenerate(B, group, subject, schedule)
+                    gen.tryGenerate(A, group, subject, schedule)
+                }
+            }
         }
         list = append(list, schedule)
     }
@@ -150,19 +152,37 @@ func CreateXLSX(filename string) (*xlsx.File, string) {
     return file, filename
 }
 
-func WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, numtable uint, iter int) error {
+func (gen *Generator) WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, iter int) error {
     const (
         colWidth = 30
         rowHeight = 30
     )
 
     var (
-        colNum = numtable + 2
+        colNum = gen.NumTables + 2
         row = make([]*xlsx.Row, colNum)
         cell *xlsx.Cell
+        dayN = gen.Day
+        day = ""
     )
 
-    sheet, err := file.AddSheet("Schedule-" + strconv.Itoa(iter))
+    if dayN == SUNDAY {
+        dayN = SATURDAY
+    } else {
+        dayN -= 1
+    }
+
+    switch dayN {
+    case SUNDAY: day = "Sunday"
+    case MONDAY: day = "Monday"
+    case TUESDAY: day = "Tuesday"
+    case WEDNESDAY: day = "Wednesday"
+    case THURSDAY: day = "Thursday"
+    case FRIDAY: day = "Friday"
+    case SATURDAY: day = "Saturday"
+    }
+
+    sheet, err := file.AddSheet(day + "-" + strconv.Itoa(iter))
     if err != nil {
         return err
     }

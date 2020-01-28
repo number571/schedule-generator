@@ -15,14 +15,19 @@ func init() {
 
 func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule) {
     nextLesson: for lesson := uint(0); lesson < gen.NumTables; lesson++ {
+
+        // Если это полная группа и у неё не осталось теоретических занятий, тогда пропустить этот предмет. 
         if subgroup == ALL && !gen.haveTheoreticalLessons(subject) {
             break nextLesson
         }
 
+        // Если это подгруппа и у неё не осталось практических занятий, тогда пропустить этот предмет.
         if subgroup != ALL && !gen.havePracticalLessons(subgroup, subject) {
             break nextLesson
         }
 
+        // Если учитель заблокирован (не может присутствовать на занятиях) или
+        // лимит пар на текущую неделю для предмета завершён, тогда пропустить этот предмет.
         if gen.inBlocked(subject.Teacher) || gen.notHaveWeekLessons(subgroup, subject) {
             break nextLesson
         }
@@ -119,6 +124,7 @@ tryAfter:
         if  gen.cellIsReserved(subgroup, schedule, lesson) || 
             gen.teacherIsReserved(subject.Teacher, lesson) || 
             gen.cabinetIsReserved(subject.Teacher, lesson, &cabinet) || 
+            (subgroup == ALL && (gen.cellIsReserved(A, schedule, lesson) || gen.cellIsReserved(B, schedule, lesson))) ||
             (gen.isDoubleLesson(group.Name, subject.Name) && gen.cabinetIsReserved(subject.Teacher2, lesson, &cabinet2)) ||
             (gen.isDoubleLesson(group.Name, subject.Name) && gen.teacherIsReserved(subject.Teacher2, lesson)){
                 if isAfter {

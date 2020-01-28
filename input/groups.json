@@ -25,75 +25,9 @@
 				"name": "subject_three",
 				"teacher": "teacher_three",
 				"lessons": {
-					"theory": 1,
+					"theory": 4,
 					"practice": 2,
-					"week": 1
-				}
-			}
-		]
-	},
-	{
-		"name": "102",
-		"quantity": 20,
-		"subjects": [
-			{
-				"name": "subject_one",
-				"teacher": "teacher_one",
-				"lessons": {
-					"theory": 2,
-					"practice": 1,
-					"week": 3
-				}
-			},
-			{
-				"name": "subject_two",
-				"teacher": "teacher_two",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 3
-				}
-			},
-			{
-				"name": "subject_three",
-				"teacher": "teacher_three",
-				"lessons": {
-					"theory": 1,
-					"practice": 2,
-					"week": 1
-				}
-			}
-		]
-	},
-	{
-		"name": "103",
-		"quantity": 20,
-		"subjects": [
-			{
-				"name": "subject_one",
-				"teacher": "teacher_one",
-				"lessons": {
-					"theory": 2,
-					"practice": 1,
-					"week": 3
-				}
-			},
-			{
-				"name": "subject_two",
-				"teacher": "teacher_two",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 3
-				}
-			},
-			{
-				"name": "subject_three",
-				"teacher": "teacher_three",
-				"lessons": {
-					"theory": 1,
-					"practice": 2,
-					"week": 1
+					"week": 2
 				}
 			}
 		]
