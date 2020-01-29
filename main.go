@@ -14,7 +14,6 @@ import (
 const (
 	INDATA = "input/"
 	OUTDATA = "output/"
-	XLSX = "schedule.xlsx"
 )
 
 func main() {
@@ -25,7 +24,7 @@ func main() {
 		Teachers: schedule.ReadTeachers(INDATA + "teachers.json"),
 	})
 	os.Mkdir(OUTDATA, 0777)
-	file, name := schedule.CreateXLSX(OUTDATA + XLSX)
+	file, name := schedule.CreateXLSX(OUTDATA + "schedule.xlsx")
 	for iter := 1; iter <= 2; iter++ {
 		result := generator.Generate()
 		generator.WriteXLSX(
@@ -35,7 +34,7 @@ func main() {
 			iter,
 		)
 	}
-	printJSON(generator)
+	// printJSON(generator)
 }
 
 func printJSON(data interface{}) {

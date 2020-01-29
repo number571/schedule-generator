@@ -2,7 +2,6 @@ package schedule
 
 import (
     "os"
-    "fmt"
     "sort"
     "time"
     "errors"
@@ -32,8 +31,6 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
         if gen.inBlocked(subject.Teacher) || gen.notHaveWeekLessons(subgroup, subject) {
             break nextLesson
         }
-
-        fmt.Println(1, lesson, group.Name, subject.Name)
 
         isAfter := false
         savedLesson := lesson
@@ -106,8 +103,6 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
             }
         }
 
-        fmt.Println(2, lesson, group.Name, subject.Name)
-
 tryAfter:
         if isAfter {
             switch subgroup {
@@ -131,8 +126,6 @@ tryAfter:
                 }
             }
         }
-
-        fmt.Println(3, lesson, group.Name, subject.Name)
 
         var (
             cabinet = ""
@@ -159,15 +152,11 @@ tryAfter:
                 continue nextLesson
         }
 
-        fmt.Println(4, lesson, group.Name, subject.Name)
-
         // Полный день - максимум 6 пар.
         // lesson начинается с нуля!
         if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && lesson >= 6 {
             break nextLesson
         }
-
-        fmt.Println(5, lesson, group.Name, subject.Name)
 
         // В среду и субботу - 5-6 пары должны быть свободны.
         // lesson начинается с нуля!
@@ -175,8 +164,6 @@ tryAfter:
             lesson = savedLesson // Возобновить сохранённое занятие.
             continue nextLesson // Перейти к следующей ячейке.
         }
-
-        fmt.Println(6, lesson, group.Name, subject.Name)
 
         // [ II ] Вторая проверка.
         switch subgroup {
@@ -212,8 +199,6 @@ tryAfter:
             }
         }
 
-        fmt.Println(7, lesson, group.Name, subject.Name)
-
 passcheck2:
         // [ III ] Третья проверка.
         // Если нет возможности добавить новые пары без создания окон, тогда не ставить пары.
@@ -234,8 +219,6 @@ passcheck2:
                 }
             }
         }
-
-        fmt.Println(8, lesson, group.Name, subject.Name)
 
         gen.Reserved.Teachers[subject.Teacher][lesson] = true
         gen.Reserved.Cabinets[cabinet][lesson] = true
