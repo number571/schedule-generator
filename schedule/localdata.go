@@ -54,7 +54,7 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
             cellSubgroupReserved := false
             indexNotReserved := uint(0)
             cellIsNotReserved := 0
-            for i := uint(0); i < gen.NumTables-1; i++ {
+            for i := uint(0); i < gen.NumTables; i++ {
                 if  gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i) ||
                     gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(A, schedule, i) {
                         if cellIsNotReserved != 0 {

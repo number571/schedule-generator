@@ -25,7 +25,7 @@ func main() {
 	})
 	os.Mkdir(OUTDATA, 0777)
 	file, name := schedule.CreateXLSX(OUTDATA + "schedule.xlsx")
-	for iter := 1; iter <= 2; iter++ {
+	for iter := 1; iter <= 5; iter++ {
 		result := generator.Generate()
 		generator.WriteXLSX(
 			file,
