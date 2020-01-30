@@ -13,8 +13,13 @@ func init() {
     rand.Seed(time.Now().UnixNano())
 }
 
-func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *Subject, schedule *Schedule, subjtype SubjectType) {
-    nextLesson: for lesson := uint(0); lesson < gen.NumTables; lesson++ {
+func (gen *Generator) tryGenerate(subgroup SubgroupType, subjtype SubjectType, group *Group, subject *Subject, schedule *Schedule, countl *Subgroup) {
+    nextLesson: for lesson := uint(0); lesson < NUM_TABLES; lesson++ {
+
+        // Если лимит пар на день окончен, тогда прекратить ставить пары группе.
+        if gen.isLimitLessons(subgroup, countl) {
+            break nextLesson
+        }
 
         // Если это полная группа и у неё не осталось теоретических занятий, тогда пропустить этот предмет. 
         if subjtype == THEORETICAL && !gen.haveTheoreticalLessons(subject) {
@@ -39,7 +44,7 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
         switch subgroup {
         case ALL:
             // Если две подгруппы стоят друг за другом, тогда исключить возможность добавления полной пары.
-            for i := uint(0); i < gen.NumTables-1; i++ {
+            for i := uint(0); i < NUM_TABLES-1; i++ {
                 if  gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i) && 
                     gen.cellIsReserved(B, schedule, i+1) && !gen.cellIsReserved(A, schedule, i+1) ||
                     gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(A, schedule, i) && 
@@ -54,7 +59,7 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
             cellSubgroupReserved := false
             indexNotReserved := uint(0)
             cellIsNotReserved := 0
-            for i := uint(0); i < gen.NumTables; i++ {
+            for i := uint(0); i < NUM_TABLES; i++ {
                 if  gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i) ||
                     gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(A, schedule, i) {
                         if cellIsNotReserved != 0 {
@@ -79,7 +84,7 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
                     !(gen.cellIsReserved(A, schedule, lesson+1) || gen.cellIsReserved(B, schedule, lesson+1)): // pass
             default: 
                 // "Подтягивать" полные пары к уже существующим [перед].
-                for i := uint(0); i < gen.NumTables-1; i++ {
+                for i := uint(0); i < NUM_TABLES-1; i++ {
                     if  (gen.cellIsReserved(A, schedule, i+1) || gen.cellIsReserved(B, schedule, i+1)) &&
                         (!gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i)) {
                             lesson = i
@@ -94,7 +99,7 @@ func (gen *Generator) tryGenerate(subgroup SubgroupType, group *Group, subject *
                     !gen.cellIsReserved(subgroup, schedule, lesson+1): // pass
             default: 
                 // "Подтягивать" неполные пары к уже существующим [перед].
-                for i := uint(0); i < gen.NumTables-1; i++ {
+                for i := uint(0); i < NUM_TABLES-1; i++ {
                     if  !gen.cellIsReserved(subgroup, schedule, i) && gen.cellIsReserved(subgroup, schedule, i+1) {
                             lesson = i
                             break
@@ -108,7 +113,7 @@ tryAfter:
             switch subgroup {
             case ALL:
                 // "Подтягивать" полные пары к уже существующим [после].
-                for i := uint(0); i < gen.NumTables-1; i++ {
+                for i := uint(0); i < NUM_TABLES-1; i++ {
                     if  (gen.cellIsReserved(A, schedule, i) || gen.cellIsReserved(B, schedule, i)) &&
                         (!gen.cellIsReserved(A, schedule, i+1) && !gen.cellIsReserved(B, schedule, i+1)) {
                             lesson = i+1
@@ -117,7 +122,7 @@ tryAfter:
                 }
             default:
                 // "Подтягивать" неполные пары к уже существующим [после].
-                for i := uint(0); i < gen.NumTables-1; i++ {
+                for i := uint(0); i < NUM_TABLES-1; i++ {
                     if  (gen.cellIsReserved(ALL, schedule, i) || gen.cellIsReserved(subgroup, schedule, i)) &&
                         !gen.cellIsReserved(subgroup, schedule, i+1) {
                             lesson = i+1
@@ -170,7 +175,7 @@ tryAfter:
         case ALL:
             // Если уже существует полная пара, которая стоит за парами с подгруппами, тогда
             // перейти на новую ячейку расписания группы.
-            for i := lesson; i < gen.NumTables-1; i++ {
+            for i := lesson; i < NUM_TABLES-1; i++ {
                 if  gen.cellIsReserved(A, schedule, i) && !gen.cellIsReserved(B, schedule, i) && gen.cellIsReserved(ALL, schedule, i+1) ||
                     gen.cellIsReserved(B, schedule, i) && !gen.cellIsReserved(A, schedule, i) && gen.cellIsReserved(ALL, schedule, i+1) {
                         lesson = savedLesson
@@ -227,12 +232,16 @@ passcheck2:
         case A:
             gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.A -= 1
             gen.Groups[group.Name].Subjects[subject.Name].Practice.A -= 1
+            countl.A += 1
         case B:
             gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.B -= 1
             gen.Groups[group.Name].Subjects[subject.Name].Practice.B -= 1
+            countl.B += 1
         case ALL:
             gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.A -= 1
             gen.Groups[group.Name].Subjects[subject.Name].WeekLessons.B -= 1
+            countl.A += 1
+            countl.B += 1
             switch subjtype {
             case THEORETICAL:
                 gen.Groups[group.Name].Subjects[subject.Name].Theory -= 1
@@ -270,6 +279,24 @@ passcheck2:
         schedule.Table[lesson].Cabinet[subgroup] = cabinet
         lesson = savedLesson
     }
+}
+
+func (gen *Generator) isLimitLessons(subgroup SubgroupType, countl *Subgroup) bool {
+    switch subgroup {
+    case ALL:
+        if countl.A >= MAX_COUNT_LESSONS_IN_DAY && countl.B >= MAX_COUNT_LESSONS_IN_DAY {
+            return true
+        }
+    case A:
+        if countl.A >= MAX_COUNT_LESSONS_IN_DAY {
+            return true
+        }
+    case B:
+        if countl.B >= MAX_COUNT_LESSONS_IN_DAY {
+            return true
+        }
+    }
+    return false
 }
 
 func (gen *Generator) withSubgroups(group string) bool {
@@ -372,7 +399,7 @@ func shuffle(slice interface{}) interface{}{
 }
 
 func (gen *Generator) cellIsReserved(subgroup SubgroupType, schedule *Schedule, lesson uint) bool {
-    if lesson >= gen.NumTables {
+    if lesson >= NUM_TABLES {
         return false
     }
     switch subgroup {
@@ -421,14 +448,14 @@ func (gen *Generator) teacherToReserved(teacher string) {
     if _, ok := gen.Reserved.Teachers[teacher]; ok {
         return
     }
-    gen.Reserved.Teachers[teacher] = make([]bool, gen.NumTables)
+    gen.Reserved.Teachers[teacher] = make([]bool, NUM_TABLES)
 }
 
 func (gen *Generator) cabinetToReserved(cabnum string) {
     if _, ok := gen.Reserved.Cabinets[cabnum]; ok {
         return
     }
-    gen.Reserved.Cabinets[cabnum] = make([]bool, gen.NumTables)
+    gen.Reserved.Cabinets[cabnum] = make([]bool, NUM_TABLES)
 }
 
 func (gen *Generator) notHaveWeekLessons(subgroup SubgroupType, subject *Subject) bool {

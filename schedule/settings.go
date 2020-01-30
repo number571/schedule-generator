@@ -6,6 +6,8 @@ const (
 )
 
 const (
+	NUM_TABLES = 11
+	MAX_COUNT_LESSONS_IN_DAY = 3
 	MAX_COUNT_WITHOUT_SUBGROUPS = 16
 )
 

@@ -26,7 +26,6 @@ const (
 
 type Generator struct {
 	Day DayType
-	NumTables uint
 	Groups map[string]*Group
 	Teachers map[string]*Teacher
 	Blocked map[string]bool

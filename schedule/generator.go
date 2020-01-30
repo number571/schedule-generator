@@ -10,7 +10,6 @@ import (
 func NewGenerator(data *Generator) *Generator {
     return &Generator{
         Day: data.Day,
-        NumTables: data.NumTables,
         Groups: data.Groups,
         Teachers: data.Teachers,
         Blocked: make(map[string]bool),
@@ -25,7 +24,7 @@ func (gen *Generator) NewSchedule(group string) *Schedule {
     return &Schedule{
         Day: gen.Day,
         Group: group,
-        Table: make([]Row, gen.NumTables),
+        Table: make([]Row, NUM_TABLES),
     }
 }
 
@@ -91,8 +90,11 @@ func (gen *Generator) Generate() []*Schedule {
     var list []*Schedule
     groups := getGroups(gen.Groups)
     for _, group := range groups {
-        var schedule = gen.NewSchedule(group.Name)
-        subjects := getSubjects(group.Subjects)
+        var (
+            schedule = gen.NewSchedule(group.Name)
+            subjects = getSubjects(group.Subjects)
+            countLessons = new(Subgroup)
+        )
         if gen.Day == SUNDAY {
             list = append(list, schedule)
             for _, subject := range subjects {
@@ -108,7 +110,7 @@ func (gen *Generator) Generate() []*Schedule {
                 if DEBUG {
                     fmt.Println(group.Name, subject.Name, ": not splited THEORETICAL;")
                 }
-                gen.tryGenerate(ALL, group, subject, schedule, THEORETICAL)
+                gen.tryGenerate(ALL, THEORETICAL, group, subject, schedule, countLessons)
             // Практические пары начинаются только после завершения всех теоретических.
             default:
                 // Если подгруппа неделимая, тогда провести практику в виде полной пары.
@@ -117,21 +119,21 @@ func (gen *Generator) Generate() []*Schedule {
                     if DEBUG {
                         fmt.Println(group.Name, subject.Name, ": not splited PRACTICAL;")
                     }
-                    gen.tryGenerate(ALL, group, subject, schedule, PRACTICAL)
+                    gen.tryGenerate(ALL, PRACTICAL, group, subject, schedule, countLessons)
                 } else {
                     switch RandSubgroup() {
                     case A:
                         if DEBUG {
                             fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
                         }
-                        gen.tryGenerate(A, group, subject, schedule, PRACTICAL)
-                        gen.tryGenerate(B, group, subject, schedule, PRACTICAL)
+                        gen.tryGenerate(A, PRACTICAL, group, subject, schedule, countLessons)
+                        gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons)
                     case B:
                         if DEBUG {
                             fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
                         }
-                        gen.tryGenerate(B, group, subject, schedule, PRACTICAL)
-                        gen.tryGenerate(A, group, subject, schedule, PRACTICAL)
+                        gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons)
+                        gen.tryGenerate(A, PRACTICAL, group, subject, schedule, countLessons)
                     }
                 }
             }
@@ -164,7 +166,7 @@ func (gen *Generator) WriteXLSX(file *xlsx.File, filename string, schedule []*Sc
     )
 
     var (
-        colNum = gen.NumTables + 2
+        colNum = uint(NUM_TABLES + 2)
         row = make([]*xlsx.Row, colNum)
         cell *xlsx.Cell
         dayN = gen.Day

@@ -16,5 +16,23 @@
 		"cabinets": [
 			"401"
 		]
+	},
+	{
+		"name": "teacher_four",
+		"cabinets": [
+			"402"
+		]
+	},
+	{
+		"name": "teacher_five",
+		"cabinets": [
+			"403"
+		]
+	},
+	{
+		"name": "teacher_six",
+		"cabinets": [
+			"404"
+		]
 	}
 ]
