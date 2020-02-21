@@ -40,3 +40,38 @@ func printJSON(data interface{}) {
 	jsonData, _ := json.MarshalIndent(data, "", "\t")
 	fmt.Println(string(jsonData))
 }
+
+/*
+// Groups:
+[
+	{
+		"name": "101",
+		"quantity": 20,
+		"subjects": [
+			{
+				"name": "subject_one",
+				"teacher": "teacher_one",
+				"is_computer": true,
+				"lessons": {
+					"theory": 2,
+					"practice": 2,
+					"week": 6
+				}
+			}
+		]
+	}
+]
+
+// Teachers:
+[
+	{
+		"name": "teacher_one",
+		"cabinets": [
+			{
+				"name": "201",
+				"is_computer": true
+			}
+		]
+	}
+]
+*/

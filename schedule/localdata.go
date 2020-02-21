@@ -426,11 +426,14 @@ func (gen *Generator) cabinetIsReserved(subgroup SubgroupType, subject *Subject,
     }
     for _, cab := range gen.Teachers[teacher].Cabinets {
         gen.cabinetToReserved(cab.Name)
+        // Если это не компьютерный кабинет, а предмет предполагает практику в компьютерных кабинетах и идёт время практики,
+        // тогда посмотреть другой кабинет преподавателя.
         if   subject.IsComputer && !cab.IsComputer &&
              gen.havePracticalLessons(subgroup, subject) &&
             !gen.haveTheoreticalLessons(subject) {
                 continue
         }
+        // Если кабинет не зарезирвирован, тогда занять кабинет.
         if _, ok := gen.Reserved.Cabinets[cab.Name]; ok && !gen.Reserved.Cabinets[cab.Name][lesson] {
             *cabinet = cab.Name
             return false
