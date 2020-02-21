@@ -6,6 +6,7 @@
 			{
 				"name": "subject_one",
 				"teacher": "teacher_one",
+				"is_computer": true,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,
@@ -15,6 +16,7 @@
 			{
 				"name": "subject_two",
 				"teacher": "teacher_two",
+				"is_computer": true,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,
@@ -24,33 +26,7 @@
 			{
 				"name": "subject_three",
 				"teacher": "teacher_three",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_five",
-				"teacher": "teacher_five",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_six",
-				"teacher": "teacher_six",
+				"is_computer": false,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,
@@ -66,6 +42,7 @@
 			{
 				"name": "subject_one",
 				"teacher": "teacher_one",
+				"is_computer": true,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,
@@ -75,6 +52,7 @@
 			{
 				"name": "subject_two",
 				"teacher": "teacher_two",
+				"is_computer": true,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,
@@ -84,33 +62,7 @@
 			{
 				"name": "subject_three",
 				"teacher": "teacher_three",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_five",
-				"teacher": "teacher_five",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_six",
-				"teacher": "teacher_six",
+				"is_computer": false,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,
@@ -126,6 +78,7 @@
 			{
 				"name": "subject_one",
 				"teacher": "teacher_one",
+				"is_computer": true,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,
@@ -135,6 +88,7 @@
 			{
 				"name": "subject_two",
 				"teacher": "teacher_two",
+				"is_computer": true,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,
@@ -144,153 +98,7 @@
 			{
 				"name": "subject_three",
 				"teacher": "teacher_three",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_five",
-				"teacher": "teacher_five",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_six",
-				"teacher": "teacher_six",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			}
-		]
-	},
-	{
-		"name": "104",
-		"quantity": 20,
-		"subjects": [
-			{
-				"name": "subject_one",
-				"teacher": "teacher_one",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_two",
-				"teacher": "teacher_two",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_three",
-				"teacher": "teacher_three",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_five",
-				"teacher": "teacher_five",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_six",
-				"teacher": "teacher_six",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			}
-		]
-	},
-	{
-		"name": "105",
-		"quantity": 20,
-		"subjects": [
-			{
-				"name": "subject_one",
-				"teacher": "teacher_one",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_two",
-				"teacher": "teacher_two",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_three",
-				"teacher": "teacher_three",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_four",
-				"teacher": "teacher_four",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_five",
-				"teacher": "teacher_five",
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			},
-			{
-				"name": "subject_six",
-				"teacher": "teacher_six",
+				"is_computer": false,
 				"lessons": {
 					"theory": 2,
 					"practice": 2,

@@ -2,37 +2,40 @@
 	{
 		"name": "teacher_one",
 		"cabinets": [
-			"201"
+			{
+				"name": "201",
+				"is_computer": true
+			},
+			{
+				"name": "202",
+				"is_computer": false
+			}
 		]
 	},
 	{
 		"name": "teacher_two",
 		"cabinets": [
-			"301"
+			{
+				"name": "301",
+				"is_computer": true
+			},
+			{
+				"name": "302",
+				"is_computer": false
+			}
 		]
 	},
 	{
 		"name": "teacher_three",
 		"cabinets": [
-			"401"
-		]
-	},
-	{
-		"name": "teacher_four",
-		"cabinets": [
-			"402"
-		]
-	},
-	{
-		"name": "teacher_five",
-		"cabinets": [
-			"403"
-		]
-	},
-	{
-		"name": "teacher_six",
-		"cabinets": [
-			"404"
+			{
+				"name": "401",
+				"is_computer": true
+			},
+			{
+				"name": "402",
+				"is_computer": false
+			}
 		]
 	}
 ]

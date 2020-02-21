@@ -143,10 +143,10 @@ tryAfter:
         // Если не получается, тогда не ставить этот урок.
         if  gen.cellIsReserved(subgroup, schedule, lesson) || 
             gen.teacherIsReserved(subject.Teacher, lesson) || 
-            gen.cabinetIsReserved(subject.Teacher, lesson, &cabinet) || 
+            gen.cabinetIsReserved(subgroup, subject, subject.Teacher, lesson, &cabinet) || 
             (subgroup == ALL && (gen.cellIsReserved(A, schedule, lesson) || gen.cellIsReserved(B, schedule, lesson))) ||
-            (gen.withSubgroups(group.Name) && gen.isDoubleLesson(group.Name, subject.Name) && gen.cabinetIsReserved(subject.Teacher2, lesson, &cabinet2)) ||
-            (gen.withSubgroups(group.Name) && gen.isDoubleLesson(group.Name, subject.Name) && gen.teacherIsReserved(subject.Teacher2, lesson)) {
+            (gen.withSubgroups(group.Name) && gen.isDoubleLesson(group.Name, subject.Name) && gen.teacherIsReserved(subject.Teacher2, lesson)) || 
+            (gen.withSubgroups(group.Name) && gen.isDoubleLesson(group.Name, subject.Name) && gen.cabinetIsReserved(subgroup, subject, subject.Teacher2, lesson, &cabinet2)) {
                 if isAfter {
                     break nextLesson
                 }
@@ -157,9 +157,9 @@ tryAfter:
                 continue nextLesson
         }
 
-        // Полный день - максимум 6 пар.
+        // Полный день - максимум 7 пар.
         // lesson начинается с нуля!
-        if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && lesson >= 6 {
+        if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && lesson >= 7 {
             break nextLesson
         }
 
@@ -187,7 +187,7 @@ tryAfter:
             // в это же время, тогда пропустить проверку пустых окон.
             if  gen.cellIsReserved(A, schedule, lesson) && A != subgroup || 
                 gen.cellIsReserved(B, schedule, lesson) && B != subgroup {
-                    goto passcheck2
+                    goto passcheck
             }
             // Если стоит полная пара, а за ней идёт подгруппа неравная проверяемой, тогда
             // прекратить ставить пары у проверяемой подгруппы.
@@ -204,7 +204,7 @@ tryAfter:
             }
         }
 
-passcheck2:
+passcheck:
         // [ III ] Третья проверка.
         // Если нет возможности добавить новые пары без создания окон, тогда не ставить пары.
         if lesson > 1 {
@@ -419,18 +419,21 @@ func (gen *Generator) cellIsReserved(subgroup SubgroupType, schedule *Schedule, 
     return false
 }
 
-func (gen *Generator) cabinetIsReserved(teacher string, lesson uint, cabinet *string) bool {
+func (gen *Generator) cabinetIsReserved(subgroup SubgroupType, subject *Subject, teacher string, lesson uint, cabinet *string) bool {
     var result = true
     if !gen.inTeachers(teacher) {
         return result
     }
-    for _, cabnum := range gen.Teachers[teacher].Cabinets {
-        gen.cabinetToReserved(cabnum)
-        if _, ok := gen.Reserved.Cabinets[cabnum]; ok {
-            if gen.Reserved.Cabinets[cabnum][lesson] == false {
-                *cabinet = cabnum
-                return false
-            }
+    for _, cab := range gen.Teachers[teacher].Cabinets {
+        gen.cabinetToReserved(cab.Name)
+        if   subject.IsComputer && !cab.IsComputer &&
+             gen.havePracticalLessons(subgroup, subject) &&
+            !gen.haveTheoreticalLessons(subject) {
+                continue
+        }
+        if _, ok := gen.Reserved.Cabinets[cab.Name]; ok && !gen.Reserved.Cabinets[cab.Name][lesson] {
+            *cabinet = cab.Name
+            return false
         }
     }
     return result

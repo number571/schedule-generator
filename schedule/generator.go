@@ -52,6 +52,7 @@ func ReadGroups(filename string) map[string]*Group {
             groups[gr.Name].Subjects[sb.Name] = &Subject{
                 Name: sb.Name,
                 Teacher: sb.Teacher,
+                IsComputer: sb.IsComputer,
                 SaveWeek: sb.Lessons.Week,
                 Theory: sb.Lessons.Theory,
                 Practice: Subgroup{
@@ -71,7 +72,7 @@ func ReadGroups(filename string) map[string]*Group {
 func ReadTeachers(filename string) map[string]*Teacher {
     var (
         teachers = make(map[string]*Teacher)
-        teachersList []TeacherJSON
+        teachersList []Teacher
     )
     data := readFile(filename)
     err := json.Unmarshal([]byte(data), &teachersList)
@@ -80,6 +81,7 @@ func ReadTeachers(filename string) map[string]*Teacher {
     }
     for _, tc := range teachersList {
         teachers[tc.Name] = &Teacher{
+            Name: tc.Name,
             Cabinets: tc.Cabinets,
         }
     }

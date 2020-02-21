@@ -50,7 +50,13 @@ type Row struct {
 }
 
 type Teacher struct {
-	Cabinets []string
+	Name string `json:"name"`
+	Cabinets []Cabinet `json:"cabinets"`
+}
+
+type Cabinet struct {
+	Name string `json:"name"`
+	IsComputer bool `json:"is_computer"`
 }
 
 type Group struct {
@@ -63,6 +69,7 @@ type Subject struct {
 	Name string
 	Teacher string
 	Teacher2 string
+	IsComputer bool
 	SaveWeek uint
 	Theory uint
 	Practice Subgroup
@@ -74,11 +81,6 @@ type Subgroup struct {
 	B uint
 }
 
-type TeacherJSON struct {
-	Name string `json:"name"`
-	Cabinets []string `json:"cabinets"`
-}
-
 type GroupJSON struct {
 	Name string `json:"name"`
 	Quantity uint `json:"quantity"`
@@ -88,6 +90,7 @@ type GroupJSON struct {
 type SubjectJSON struct {
 	Name string `json:"name"`
 	Teacher string `json:"teacher"`
+	IsComputer bool `json:"is_computer"`
 	Lessons LessonsJSON `json:"lessons"`
 }
 
