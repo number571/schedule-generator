@@ -10,6 +10,7 @@ import (
 func NewGenerator(data *Generator) *Generator {
     return &Generator{
         Day: data.Day,
+        Debug: data.Debug,
         Groups: data.Groups,
         Teachers: data.Teachers,
         Blocked: make(map[string]bool),
@@ -109,7 +110,7 @@ func (gen *Generator) Generate() []*Schedule {
         for _, subject := range subjects {
             switch {
             case gen.haveTheoreticalLessons(subject):
-                if DEBUG {
+                if gen.Debug {
                     fmt.Println(group.Name, subject.Name, ": not splited THEORETICAL;")
                 }
                 gen.tryGenerate(ALL, THEORETICAL, group, subject, schedule, countLessons)
@@ -118,20 +119,20 @@ func (gen *Generator) Generate() []*Schedule {
                 // Если подгруппа неделимая, тогда провести практику в виде полной пары.
                 // Иначе разделить практику на две подгруппы.
                 if !gen.withSubgroups(group.Name) {
-                    if DEBUG {
+                    if gen.Debug {
                         fmt.Println(group.Name, subject.Name, ": not splited PRACTICAL;")
                     }
                     gen.tryGenerate(ALL, PRACTICAL, group, subject, schedule, countLessons)
                 } else {
                     switch RandSubgroup() {
                     case A:
-                        if DEBUG {
+                        if gen.Debug {
                             fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
                         }
                         gen.tryGenerate(A, PRACTICAL, group, subject, schedule, countLessons)
                         gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons)
                     case B:
-                        if DEBUG {
+                        if gen.Debug {
                             fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
                         }
                         gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons)

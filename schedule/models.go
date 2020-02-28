@@ -26,6 +26,7 @@ const (
 
 type Generator struct {
 	Day DayType
+	Debug bool
 	Groups map[string]*Group
 	Teachers map[string]*Teacher
 	Blocked map[string]bool

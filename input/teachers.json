@@ -4,11 +4,11 @@
 		"cabinets": [
 			{
 				"name": "201",
-				"is_computer": true
+				"is_computer": false
 			},
 			{
 				"name": "202",
-				"is_computer": false
+				"is_computer": true
 			}
 		]
 	},
@@ -17,11 +17,11 @@
 		"cabinets": [
 			{
 				"name": "301",
-				"is_computer": true
+				"is_computer": false
 			},
 			{
 				"name": "302",
-				"is_computer": false
+				"is_computer": true
 			}
 		]
 	},
@@ -30,11 +30,11 @@
 		"cabinets": [
 			{
 				"name": "401",
-				"is_computer": true
+				"is_computer": false
 			},
 			{
 				"name": "402",
-				"is_computer": false
+				"is_computer": true
 			}
 		]
 	}
