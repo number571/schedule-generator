@@ -18,14 +18,14 @@ const (
 
 func main() {
 	var generator = schedule.NewGenerator(&schedule.Generator{
-		// Debug: true,
+		Debug: true,
 		Day: schedule.MONDAY,
 		Groups: schedule.ReadGroups(INDATA + "groups.json"),
 		Teachers: schedule.ReadTeachers(INDATA + "teachers.json"),
 	})
 	os.Mkdir(OUTDATA, 0777)
 	file, name := schedule.CreateXLSX(OUTDATA + "schedule.xlsx")
-	for iter := 1; iter <= 7; iter++ {
+	for iter := 1; iter <= 15; iter++ {
 		result := generator.Generate()
 		generator.WriteXLSX(
 			file,

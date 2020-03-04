@@ -267,6 +267,7 @@ passcheck:
             // Если это двойная пара и группа делимая, тогда поставить пару с разными преподавателями.
             if gen.isDoubleLesson(group.Name, subject.Name) && gen.withSubgroups(group.Name) {
                 gen.Reserved.Teachers[subject.Teacher2][lesson] = true
+                gen.Reserved.Cabinets[cabinet2][lesson] = true
                 schedule.Table[lesson].Teacher[B] = subject.Teacher2
                 schedule.Table[lesson].Cabinet[B] = cabinet2
             }

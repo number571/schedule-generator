@@ -169,8 +169,19 @@ func (gen *Generator) WriteXLSX(file *xlsx.File, filename string, schedule []*Sc
     )
 
     var (
+        MAXCOL = uint(3)
+    )
+
+    rowsNext := uint(len(schedule)) / MAXCOL
+    if rowsNext == 0 || uint(len(schedule)) % MAXCOL != 0 {
+        rowsNext += 1
+    }
+
+    var (
+        
         colNum = uint(NUM_TABLES + 2)
-        row = make([]*xlsx.Row, colNum)
+        
+        row = make([]*xlsx.Row, colNum * rowsNext) //  * (rowsNext + 1)
         cell *xlsx.Cell
         dayN = gen.Day
         day = ""
@@ -197,74 +208,85 @@ func (gen *Generator) WriteXLSX(file *xlsx.File, filename string, schedule []*Sc
         return err
     }
 
-    sheet.SetColWidth(2, len(schedule)*3+1, COL_W)
-    for i := uint(0); i < colNum; i++ {
-        row[i] = sheet.AddRow()
-        row[i].SetHeight(ROW_H)
-        cell = row[i].AddCell()
-        if i == 0 {
-            cell.Value = "Пара"
-            continue
+    sheet.SetColWidth(2, int(MAXCOL)*3+1, COL_W)
+
+    for r := uint(0); r < rowsNext; r++ {
+        for i := uint(0); i < colNum; i++ {
+            row[(r*colNum)+i] = sheet.AddRow() // (r*rowsNext)+
+            row[(r*colNum)+i].SetHeight(ROW_H)
+            cell = row[(r*colNum)+i].AddCell()
+            if i == 0 {
+                cell.Value = "Пара"
+                continue
+            }
+            cell.Value = strconv.Itoa(int(i-1))
         }
-        cell.Value = strconv.Itoa(int(i-1))
     }
 
-    for i, sch := range schedule {
-        savedCell := row[0].AddCell()
-        savedCell.Value = "Группа " + sch.Group
-
-        cell = row[0].AddCell()
-        cell = row[0].AddCell()
-
-        savedCell.Merge(2, 0)
-
-        cell = row[1].AddCell()
-        cell.Value = "Предмет"
-
-        cell = row[1].AddCell()
-        cell.Value = "Преподаватель"
-
-        cell = row[1].AddCell()
-        cell.Value = "Кабинет"
-
-        for j, trow := range sch.Table {
-
-            cell = row[j+2].AddCell()
-            if trow.Subject[A] == trow.Subject[B] {
-                cell.Value = trow.Subject[A]
-            } else {
-                if trow.Subject[A] != "" {
-                    cell.Value = trow.Subject[A] + " (A)"
-                }
-                if trow.Subject[B] != "" {
-                    cell.Value += "\n" + trow.Subject[B] + " (B)"
-                }
+    index := uint(0)
+    exit: for r := uint(0); r < rowsNext; r++ {
+        for i := uint(0); i < MAXCOL; i++ {
+            if uint(len(schedule)) <= index {
+                break exit
             }
 
-            cell = row[j+2].AddCell()
-            if trow.Teacher[A] == trow.Teacher[B] {
-                cell.Value = trow.Teacher[A]
-            } else {
-                if trow.Teacher[A] != "" {
+            savedCell := row[(r*colNum)+0].AddCell()
+            savedCell.Value = "Группа " + schedule[index].Group
+
+            cell = row[(r*colNum)+0].AddCell()
+            cell = row[(r*colNum)+0].AddCell()
+
+            savedCell.Merge(2, 0)
+
+            cell = row[(r*colNum)+1].AddCell()
+            cell.Value = "Предмет"
+
+            cell = row[(r*colNum)+1].AddCell()
+            cell.Value = "Преподаватель"
+
+            cell = row[(r*colNum)+1].AddCell()
+            cell.Value = "Кабинет"
+
+            for j, trow := range schedule[index].Table {
+                cell = row[(r*colNum)+uint(j)+2].AddCell()
+                if trow.Subject[A] == trow.Subject[B] {
+                    cell.Value = trow.Subject[A]
+                } else {
+                    if trow.Subject[A] != "" {
+                        cell.Value = trow.Subject[A] + " (A)"
+                    }
+                    if trow.Subject[B] != "" {
+                        cell.Value += "\n" + trow.Subject[B] + " (B)"
+                    }
+                }
+
+                cell = row[(r*colNum)+uint(j)+2].AddCell()
+                if trow.Teacher[A] == trow.Teacher[B] {
                     cell.Value = trow.Teacher[A]
+                } else {
+                    if trow.Teacher[A] != "" {
+                        cell.Value = trow.Teacher[A]
+                    }
+                    if trow.Teacher[B] != "" {
+                        cell.Value += "\n" + trow.Teacher[B]
+                    }
                 }
-                if trow.Teacher[B] != "" {
-                    cell.Value += "\n" + trow.Teacher[B]
+
+                sheet.SetColWidth(colWidthForCabinets(int(j)))
+                cell = row[(r*colNum)+uint(j)+2].AddCell()
+                if trow.Cabinet[A] == trow.Cabinet[B] {
+                    cell.Value = trow.Cabinet[A]
+                } else {
+                    if trow.Cabinet[A] != "" {
+                        cell.Value = trow.Cabinet[A]
+                    }
+                    if trow.Cabinet[B] != "" {
+                        cell.Value += "\n" + trow.Cabinet[B]
+                    }
                 }
             }
 
-            sheet.SetColWidth(colWidthForCabinets(i))
-            cell = row[j+2].AddCell()
-            if trow.Cabinet[A] == trow.Cabinet[B] {
-                cell.Value = trow.Cabinet[A]
-            } else {
-                if trow.Cabinet[A] != "" {
-                    cell.Value = trow.Cabinet[A]
-                }
-                if trow.Cabinet[B] != "" {
-                    cell.Value += "\n" + trow.Cabinet[B]
-                }
-            }
+            index++
         }
     }
 
