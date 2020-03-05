@@ -23,10 +23,11 @@ func main() {
 		Groups: schedule.ReadGroups(INDATA + "groups.json"),
 		Teachers: schedule.ReadTeachers(INDATA + "teachers.json"),
 	})
+	template := generator.Template()
 	os.Mkdir(OUTDATA, 0777)
 	file, name := schedule.CreateXLSX(OUTDATA + "schedule.xlsx")
-	for iter := 1; iter <= 15; iter++ {
-		result := generator.Generate()
+	for iter := 1; iter <= 7; iter++ {
+		result := generator.Generate(template)
 		generator.WriteXLSX(
 			file,
 			name,

@@ -89,9 +89,41 @@ func ReadTeachers(filename string) map[string]*Teacher {
     return teachers
 }
 
-func (gen *Generator) Generate() []*Schedule {
-    var list []*Schedule
-    groups := getGroups(gen.Groups)
+const (
+    OUTDATA = "output/"
+)
+func (gen *Generator) Template() [][]*Schedule {
+    var (
+        weekLessons = make([][]*Schedule, 7)
+        generator = new(Generator)
+    )
+    unpackJSON(packJSON(gen), generator)
+    file, name := CreateXLSX(OUTDATA + "template.xlsx")
+    for i := generator.Day; i < generator.Day+7; i++ {
+        weekLessons[i % 7] = generator.Generate(nil)
+        if gen.Debug {
+            generator.WriteXLSX(
+                file,
+                name,
+                weekLessons[i],
+                int(i),
+            )
+        }
+    }
+    return weekLessons
+}
+
+func (gen *Generator) Generate(template [][]*Schedule) []*Schedule {
+    var (
+        list   []*Schedule
+        templt []*Schedule
+        groups = getGroups(gen.Groups)
+    )
+    if template == nil {
+        templt = nil
+    } else {
+        templt = template[gen.Day]
+    }
     for _, group := range groups {
         var (
             schedule = gen.NewSchedule(group.Name)
@@ -113,7 +145,7 @@ func (gen *Generator) Generate() []*Schedule {
                 if gen.Debug {
                     fmt.Println(group.Name, subject.Name, ": not splited THEORETICAL;")
                 }
-                gen.tryGenerate(ALL, THEORETICAL, group, subject, schedule, countLessons)
+                gen.tryGenerate(ALL, THEORETICAL, group, subject, schedule, countLessons, templt)
             // Практические пары начинаются только после завершения всех теоретических.
             default:
                 // Если подгруппа неделимая, тогда провести практику в виде полной пары.
@@ -122,21 +154,21 @@ func (gen *Generator) Generate() []*Schedule {
                     if gen.Debug {
                         fmt.Println(group.Name, subject.Name, ": not splited PRACTICAL;")
                     }
-                    gen.tryGenerate(ALL, PRACTICAL, group, subject, schedule, countLessons)
+                    gen.tryGenerate(ALL, PRACTICAL, group, subject, schedule, countLessons, templt)
                 } else {
                     switch RandSubgroup() {
                     case A:
                         if gen.Debug {
                             fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
                         }
-                        gen.tryGenerate(A, PRACTICAL, group, subject, schedule, countLessons)
-                        gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons)
+                        gen.tryGenerate(A, PRACTICAL, group, subject, schedule, countLessons, templt)
+                        gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons, templt)
                     case B:
                         if gen.Debug {
                             fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
                         }
-                        gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons)
-                        gen.tryGenerate(A, PRACTICAL, group, subject, schedule, countLessons)
+                        gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons, templt)
+                        gen.tryGenerate(A, PRACTICAL, group, subject, schedule, countLessons, templt)
                     }
                 }
             }

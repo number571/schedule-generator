@@ -1,23 +1,5 @@
 [
 	{
-		"name": "teacher_ENGLISH1",
-		"cabinets": [
-			{
-				"name": "101",
-				"is_computer": false
-			}
-		]
-	},
-	{
-		"name": "teacher_ENGLISH2",
-		"cabinets": [
-			{
-				"name": "102",
-				"is_computer": false
-			}
-		]
-	},
-	{
 		"name": "teacher_one",
 		"cabinets": [
 			{

@@ -13,9 +13,16 @@ func init() {
     rand.Seed(time.Now().UnixNano())
 }
 
-func (gen *Generator) tryGenerate(subgroup SubgroupType, subjtype SubjectType, group *Group, subject *Subject, schedule *Schedule, countl *Subgroup) {
+func (gen *Generator) tryGenerate(
+    subgroup SubgroupType, 
+    subjtype SubjectType, 
+    group *Group, 
+    subject *Subject, 
+    schedule *Schedule, 
+    countl *Subgroup, 
+    template []*Schedule,
+) {
     nextLesson: for lesson := uint(0); lesson < NUM_TABLES; lesson++ {
-
         // Если лимит пар на день окончен, тогда прекратить ставить пары группе.
         if gen.isLimitLessons(subgroup, countl) {
             break nextLesson
@@ -155,6 +162,19 @@ tryAfter:
                     goto tryAfter
                 }
                 continue nextLesson
+        }
+
+        // Если существует шаблон расписания, тогда придерживаться его структуры.
+        if template != nil {
+            for _, sch := range template {
+                if sch.Group == group.Name {
+                    if sch.Table[lesson].Subject[A] == "" && sch.Table[lesson].Subject[B] == "" {
+                        lesson = savedLesson
+                        continue nextLesson
+                    }
+                    break
+                }
+            }
         }
 
         // Полный день - максимум 7 пар.
@@ -350,6 +370,11 @@ func packJSON(data interface{}) []byte {
         return nil
     }
     return jsonData
+}
+
+func unpackJSON(data []byte, output interface{}) error {
+    err := json.Unmarshal(data, output)
+    return err
 }
 
 func writeJSON(filename string, data interface{}) error {
