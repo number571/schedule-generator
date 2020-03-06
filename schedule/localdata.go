@@ -22,6 +22,21 @@ func (gen *Generator) tryGenerate(
     countl *Subgroup, 
     template []*Schedule,
 ) {
+    var (
+        indexGroup = -1
+        flag       = false
+    )
+    if template != nil {
+        for i, sch := range template {
+            if sch.Group == group.Name {
+                indexGroup = i
+            }
+        }
+        if indexGroup == -1 {
+            return
+        }
+    }
+startAgain:
     nextLesson: for lesson := uint(0); lesson < NUM_TABLES; lesson++ {
         // Если лимит пар на день окончен, тогда прекратить ставить пары группе.
         if gen.isLimitLessons(subgroup, countl) {
@@ -99,7 +114,7 @@ func (gen *Generator) tryGenerate(
                         }
                 }
             }
-            
+
         default:
             switch {
             case    lesson > 1 && gen.cellIsReserved(subgroup, schedule, lesson-1) &&
@@ -165,18 +180,16 @@ tryAfter:
         }
 
         // Если существует шаблон расписания, тогда придерживаться его структуры.
-        if template != nil {
-            for _, sch := range template {
-                if sch.Group == group.Name {
-                    if sch.Table[lesson].Subject[A] == "" && sch.Table[lesson].Subject[B] == "" {
-                        lesson = savedLesson
-                        continue nextLesson
-                    }
-                    break
-                }
+        if template != nil && template[indexGroup].Table[lesson].Subject[A] == "" && template[indexGroup].Table[lesson].Subject[B] == "" {
+            if  (gen.cellIsReserved(A, schedule, lesson) && !gen.cellIsReserved(B, schedule, lesson)) ||
+                (gen.cellIsReserved(B, schedule, lesson) && !gen.cellIsReserved(A, schedule, lesson)) {
+                    goto passTemplate
             }
+            lesson = savedLesson
+            continue nextLesson
         }
 
+passTemplate:
         // Полный день - максимум 7 пар.
         // lesson начинается с нуля!
         if (gen.Day != WEDNESDAY && gen.Day != SATURDAY) && lesson >= 7 {
@@ -207,7 +220,7 @@ tryAfter:
             // в это же время, тогда пропустить проверку пустых окон.
             if  gen.cellIsReserved(A, schedule, lesson) && A != subgroup || 
                 gen.cellIsReserved(B, schedule, lesson) && B != subgroup {
-                    goto passcheck
+                    goto passCheck
             }
             // Если стоит полная пара, а за ней идёт подгруппа неравная проверяемой, тогда
             // прекратить ставить пары у проверяемой подгруппы.
@@ -224,7 +237,7 @@ tryAfter:
             }
         }
 
-passcheck:
+passCheck:
         // [ III ] Третья проверка.
         // Если нет возможности добавить новые пары без создания окон, тогда не ставить пары.
         if lesson > 1 {
@@ -299,6 +312,11 @@ passcheck:
         schedule.Table[lesson].Subject[subgroup] = subject.Name
         schedule.Table[lesson].Cabinet[subgroup] = cabinet
         lesson = savedLesson
+    }
+
+    if template != nil && !flag {
+        flag = true
+        goto startAgain
     }
 }
 
