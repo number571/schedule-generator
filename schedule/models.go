@@ -25,29 +25,33 @@ const (
 )
 
 type Generator struct {
-	Day DayType
-	Debug bool
-	Groups map[string]*Group
-	Teachers map[string]*Teacher
-	Blocked map[string]bool
-	Reserved Reserved
+	reserved reserved
+	Day DayType `json:"day"`
+	Groups map[string]*Group `json:"groups"`
+	Teachers map[string]*Teacher `json:"teachers"`
+	Blocked Blocked `json:"blocked"`
 }
 
-type Reserved struct {
-	Teachers map[string][]bool
-	Cabinets map[string][]bool
+type Blocked struct {
+	Groups []string `json:"groups"`
+	Teachers []string `json:"teachers"`
+}
+
+type reserved struct {
+	teachers map[string][]bool
+	cabinets map[string][]bool
 }
 
 type Schedule struct {
-	Day DayType
-	Group string
-	Table []Row
+	Day DayType `json:"day"`
+	Group string `json:"group"`
+	Table []Row `json:"table"`
 }
 
 type Row struct {
-	Subject [ALL]string
-	Teacher [ALL]string
-	Cabinet [ALL]string
+	Subject [ALL]string `json:"subject"`
+	Teacher [ALL]string `json:"teacher"`
+	Cabinet [ALL]string `json:"cabinet"`
 }
 
 type Teacher struct {
@@ -61,25 +65,25 @@ type Cabinet struct {
 }
 
 type Group struct {
-	Name string
-	Quantity uint // students count
-	Subjects map[string]*Subject
+	Name string `json:"name"`
+	Quantity uint `json:"quantity"` // students count
+	Subjects map[string]*Subject `json:"subjects"`
 }
 
 type Subject struct {
-	Name string
-	Teacher string
-	Teacher2 string
-	IsComputer bool
-	SaveWeek uint
-	Theory uint
-	Practice Subgroup
-	WeekLessons Subgroup
+	Name string `json:"name"`
+	Teacher string `json:"teacher"`
+	Teacher2 string `json:"teacher2"`
+	IsComputer bool `json:"is_computer"`
+	SaveWeek uint `json:"save_week"`
+	Theory uint `json:"theory"`
+	Practice Subgroup `json:"practice"`
+	WeekLessons Subgroup `json:"week_lessons"`
 }
 
 type Subgroup struct {
-	A uint
-	B uint
+	A uint `json:"a"`
+	B uint `json:"b"`
 }
 
 type GroupJSON struct {

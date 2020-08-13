@@ -5,6 +5,7 @@ import (
     "sort"
     "time"
     "errors"
+    "io/ioutil"
     "math/rand"
     "encoding/json"
 )
@@ -22,6 +23,9 @@ func (gen *Generator) tryGenerate(
     countl *Subgroup, 
     template []*Schedule,
 ) {
+    if gen.inBlockedGroups(group.Name) {
+        return
+    }
     var (
         indexGroup = -1
         flag       = false
@@ -55,7 +59,7 @@ startAgain:
 
         // Если учитель заблокирован (не может присутствовать на занятиях) или
         // лимит пар на текущую неделю для предмета завершён, тогда пропустить этот предмет.
-        if gen.inBlocked(subject.Teacher) || gen.notHaveWeekLessons(subgroup, subject) {
+        if gen.inBlockedTeachers(subject.Teacher) || gen.notHaveWeekLessons(subgroup, subject) {
             break nextLesson
         }
 
@@ -258,8 +262,8 @@ passCheck:
             }
         }
 
-        gen.Reserved.Teachers[subject.Teacher][lesson] = true
-        gen.Reserved.Cabinets[cabinet][lesson] = true
+        gen.reserved.teachers[subject.Teacher][lesson] = true
+        gen.reserved.cabinets[cabinet][lesson] = true
 
         switch subgroup {
         case A:
@@ -299,8 +303,8 @@ passCheck:
             }
             // Если это двойная пара и группа делимая, тогда поставить пару с разными преподавателями.
             if gen.isDoubleLesson(group.Name, subject.Name) && gen.withSubgroups(group.Name) {
-                gen.Reserved.Teachers[subject.Teacher2][lesson] = true
-                gen.Reserved.Cabinets[cabinet2][lesson] = true
+                gen.reserved.teachers[subject.Teacher2][lesson] = true
+                gen.reserved.cabinets[cabinet2][lesson] = true
                 schedule.Table[lesson].Teacher[B] = subject.Teacher2
                 schedule.Table[lesson].Cabinet[B] = cabinet2
             }
@@ -345,19 +349,90 @@ func (gen *Generator) withSubgroups(group string) bool {
     return false
 }
 
+func remove(data []string, index int) []string {
+    return append(data[:index], data[index+1:]...)
+}
+
+func (gen *Generator) blockGroup(group string) error {
+    if !gen.inGroups(group) {
+        return errors.New("group undefined")
+    }
+    // gen.Blocked.Groups[group] = true
+    for _, elem := range gen.Blocked.Groups {
+        if elem == group {
+            return nil
+        }
+    }
+    gen.Blocked.Groups = append(gen.Blocked.Groups, group)
+    return nil
+}
+
+func (gen *Generator) unblockGroup(group string) error {
+    if !gen.inBlockedGroups(group) {
+        return errors.New("group undefined")
+    }
+    // delete(gen.Blocked.Groups, group)
+    for i, elem := range gen.Blocked.Groups {
+        if elem == group {
+            remove(gen.Blocked.Groups, i)
+            break
+        }
+    }
+    return nil
+}
+
+func (gen *Generator) inBlockedGroups(group string) bool {
+    // if _, ok := gen.Blocked.Groups[group]; !ok {
+    //     return false
+    // }
+    // return true
+    for _, elem := range gen.Blocked.Groups {
+        if elem == group {
+            return true
+        }
+    }
+    return false
+}
+
 func (gen *Generator) blockTeacher(teacher string) error {
     if !gen.inTeachers(teacher) {
         return errors.New("teacher undefined")
     }
-    gen.Blocked[teacher] = true
+    // gen.Blocked.Teachers[teacher] = true
+    for _, elem := range gen.Blocked.Teachers {
+        if elem == teacher {
+            return nil
+        }
+    }
+    gen.Blocked.Teachers = append(gen.Blocked.Teachers, teacher)
     return nil
 }
 
-func (gen *Generator) inBlocked(teacher string) bool {
-    if _, ok := gen.Blocked[teacher]; !ok {
-        return false
+func (gen *Generator) unblockTeacher(teacher string) error {
+    if !gen.inBlockedTeachers(teacher) {
+        return errors.New("teacher undefined")
     }
-    return true
+    // delete(gen.Blocked.Teachers, teacher)
+    for i, elem := range gen.Blocked.Teachers {
+        if elem == teacher {
+            remove(gen.Blocked.Teachers, i)
+            break
+        }
+    }
+    return nil
+}
+
+func (gen *Generator) inBlockedTeachers(teacher string) bool {
+    // if _, ok := gen.Blocked.Teachers[teacher]; !ok {
+    //     return false
+    // }
+    // return true
+    for _, elem := range gen.Blocked.Teachers {
+        if elem == teacher {
+            return true
+        }
+    }
+    return false
 }
 
 func (gen *Generator) inGroups(group string) bool {
@@ -372,14 +447,6 @@ func (gen *Generator) inTeachers(teacher string) bool {
         return false
     }
     return true
-}
-
-func (gen *Generator) unblockTeacher(teacher string) error {
-    if !gen.inBlocked(teacher) {
-        return errors.New("teacher undefined")
-    }
-    delete(gen.Blocked, teacher)
-    return nil
 }
 
 func packJSON(data interface{}) []byte {
@@ -478,7 +545,7 @@ func (gen *Generator) cabinetIsReserved(subgroup SubgroupType, subject *Subject,
                 continue
         }
         // Если кабинет не зарезирвирован, тогда занять кабинет.
-        if _, ok := gen.Reserved.Cabinets[cab.Name]; ok && !gen.Reserved.Cabinets[cab.Name][lesson] {
+        if _, ok := gen.reserved.cabinets[cab.Name]; ok && !gen.reserved.cabinets[cab.Name][lesson] {
             *cabinet = cab.Name
             return false
         }
@@ -486,26 +553,26 @@ func (gen *Generator) cabinetIsReserved(subgroup SubgroupType, subject *Subject,
     return result
 }
 
+func (gen *Generator) cabinetToReserved(cabnum string) {
+    if _, ok := gen.reserved.cabinets[cabnum]; ok {
+        return
+    }
+    gen.reserved.cabinets[cabnum] = make([]bool, NUM_TABLES)
+}
+
 func (gen *Generator) teacherIsReserved(teacher string, lesson uint) bool {
     gen.teacherToReserved(teacher)
-    if value, ok := gen.Reserved.Teachers[teacher]; ok {
+    if value, ok := gen.reserved.teachers[teacher]; ok {
         return value[lesson] == true
     }
     return false
 }
 
 func (gen *Generator) teacherToReserved(teacher string) {
-    if _, ok := gen.Reserved.Teachers[teacher]; ok {
+    if _, ok := gen.reserved.teachers[teacher]; ok {
         return
     }
-    gen.Reserved.Teachers[teacher] = make([]bool, NUM_TABLES)
-}
-
-func (gen *Generator) cabinetToReserved(cabnum string) {
-    if _, ok := gen.Reserved.Cabinets[cabnum]; ok {
-        return
-    }
-    gen.Reserved.Cabinets[cabnum] = make([]bool, NUM_TABLES)
+    gen.reserved.teachers[teacher] = make([]bool, NUM_TABLES)
 }
 
 func (gen *Generator) notHaveWeekLessons(subgroup SubgroupType, subject *Subject) bool {
@@ -584,27 +651,6 @@ func random(min, max int) int {
     return rand.Intn(max - min + 1) + min
 }
 
-func readFile(filename string) string {
-    file, err := os.Open(filename)
-    if err != nil {
-        return ""
-    }
-    defer file.Close()
-
-    var (
-        buffer []byte = make([]byte, BUFFER)
-        data string
-    )
-
-    for {
-        length, err := file.Read(buffer)
-        if length == 0 || err != nil { break }
-        data += string(buffer[:length])
-    }
-
-    return data
-}
-
 func writeFile(filename, data string) error {
     file, err := os.Create(filename)
     if err != nil {
@@ -613,4 +659,12 @@ func writeFile(filename, data string) error {
     file.WriteString(data)
     file.Close()
     return nil
+}
+
+func readFile(filename string) string {
+    data, err := ioutil.ReadFile(filename)
+    if err != nil {
+        return ""
+    }
+    return string(data)
 }

@@ -1,79 +1,128 @@
 package main
 
-/*
-	github.com/tealeg/xlsx
-*/
-
 import (
-	"os"
-	"fmt"
+	"net/http"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
-	"./schedule"
+	sc "./schedule"
 )
 
-const (
-	INDATA = "input/"
-	OUTDATA = "output/"
+var (
+	Template [][]*sc.Schedule
 )
 
 func main() {
-	var generator = schedule.NewGenerator(&schedule.Generator{
-		Debug: true,
-		Day: schedule.MONDAY,
-		Groups: schedule.ReadGroups(INDATA + "groups.json"),
-		Teachers: schedule.ReadTeachers(INDATA + "teachers.json"),
+	http.HandleFunc("/", indexPage)
+	http.HandleFunc("/create", createPage)
+	http.HandleFunc("/generate", generatePage)
+	http.ListenAndServe(":7545", nil)
+}
+
+func indexPage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(struct{
+		Return int `json:"return"`
+	}{
+		Return: 0,
 	})
-	template := generator.Template()
-	os.Mkdir(OUTDATA, 0777)
-	file, name := schedule.CreateXLSX(OUTDATA + "schedule.xlsx")
-	for iter := 1; iter <= 7; iter++ {
-		result := generator.Generate(template)
-		generator.WriteXLSX(
-			file,
-			name,
-			result,
-			iter,
-		)
-	}
-	// printJSON(generator)
 }
 
-func printJSON(data interface{}) {
-	jsonData, _ := json.MarshalIndent(data, "", "\t")
-	fmt.Println(string(jsonData))
+// Method: POST
+func createPage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	var data struct {
+		Generator *sc.Generator `json:"generator"`
+		Return int `json:"return"`
+	}
+
+	var read struct {
+		Day int `json:"day"`
+		Groups []sc.GroupJSON `json:"groups"`
+		Teachers []sc.Teacher `json:"teachers"`
+	}
+
+	if r.Method != "POST" {
+		data.Return = 1
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&read)
+	if err != nil {
+		data.Return = 2
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	groups := sc.ReadGroups(read.Groups)
+	if groups == nil {
+		data.Return = 3
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	teachers := sc.ReadTeachers(read.Teachers)
+	if teachers == nil {
+		data.Return = 4
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	generator := sc.NewGenerator(&sc.Generator{
+		Day: sc.DayType(read.Day),
+		Groups: groups,
+		Teachers: teachers,
+	})
+
+	Template = generator.Template()
+	data.Generator = generator
+
+	enc := json.NewEncoder(w)
+	enc.SetIndent("", "\t")
+	enc.Encode(data)
 }
 
-/*
-// Groups:
-[
-	{
-		"name": "101",
-		"quantity": 20,
-		"subjects": [
-			{
-				"name": "subject_one",
-				"teacher": "teacher_one",
-				"is_computer": true,
-				"lessons": {
-					"theory": 2,
-					"practice": 2,
-					"week": 6
-				}
-			}
-		]
-	}
-]
+// Method: POST
+func generatePage(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
 
-// Teachers:
-[
-	{
-		"name": "teacher_one",
-		"cabinets": [
-			{
-				"name": "201",
-				"is_computer": true
-			}
-		]
+	var data struct {
+		Schedule []*sc.Schedule `json:"schedule"`
+		Hashsum string `json:"hashsum"`
+		Return int `json:"return"`
 	}
-]
-*/
+	
+	var read struct {
+		Generator *sc.Generator `json:"generator"`
+	}
+
+	if r.Method != "POST" {
+		data.Return = 1
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	err := json.NewDecoder(r.Body).Decode(&read)
+	if err != nil {
+		data.Return = 2
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	jsonData, err := json.Marshal(Template)
+	if err != nil {
+		data.Return = 3
+		json.NewEncoder(w).Encode(data)
+		return
+	}
+
+	hash := sha256.Sum256(jsonData)
+	data.Hashsum = hex.EncodeToString(hash[:])
+	data.Schedule = read.Generator.Generate(Template)
+
+	enc := json.NewEncoder(w)
+	enc.SetIndent("", "\t")
+	enc.Encode(data)
+}

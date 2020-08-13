@@ -1,6 +1,7 @@
 package schedule
 
 const (
+	DEBUG = false
 	BUFFER = 1 << 20 // 1MiB
 )
 

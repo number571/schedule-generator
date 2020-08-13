@@ -10,14 +10,12 @@ import (
 func NewGenerator(data *Generator) *Generator {
     return &Generator{
         Day: data.Day,
-        Debug: data.Debug,
         Groups: data.Groups,
         Teachers: data.Teachers,
-        Blocked: make(map[string]bool),
-        Reserved: Reserved{
-            Teachers: make(map[string][]bool),
-            Cabinets: make(map[string][]bool),
-        },
+        // Blocked: Blocked{
+        //     Teachers: make(map[string]bool),
+        //     Groups: make(map[string]bool),
+        // },
     }
 }
 
@@ -29,16 +27,10 @@ func (gen *Generator) NewSchedule(group string) *Schedule {
     }
 }
 
-func ReadGroups(filename string) map[string]*Group {
+func ReadGroups(groupsList []GroupJSON) map[string]*Group {
     var (
         groups = make(map[string]*Group)
-        groupsList []GroupJSON
     )
-    data := readFile(filename)
-    err := json.Unmarshal([]byte(data), &groupsList)
-    if err != nil {
-        return nil
-    }
     for _, gr := range groupsList {
         groups[gr.Name] = &Group{
             Name: gr.Name,
@@ -70,16 +62,10 @@ func ReadGroups(filename string) map[string]*Group {
     return groups
 }
 
-func ReadTeachers(filename string) map[string]*Teacher {
+func ReadTeachers(teachersList []Teacher) map[string]*Teacher {
     var (
         teachers = make(map[string]*Teacher)
-        teachersList []Teacher
     )
-    data := readFile(filename)
-    err := json.Unmarshal([]byte(data), &teachersList)
-    if err != nil {
-        return nil
-    }
     for _, tc := range teachersList {
         teachers[tc.Name] = &Teacher{
             Name: tc.Name,
@@ -101,7 +87,7 @@ func (gen *Generator) Template() [][]*Schedule {
     file, name := CreateXLSX(OUTDATA + "template.xlsx")
     for i := generator.Day; i < generator.Day+7; i++ {
         weekLessons[i % 7] = generator.Generate(nil)
-        if gen.Debug {
+        if DEBUG {
             generator.WriteXLSX(
                 file,
                 name,
@@ -124,6 +110,8 @@ func (gen *Generator) Generate(template [][]*Schedule) []*Schedule {
     } else {
         templt = template[gen.Day]
     }
+    gen.reserved.teachers = make(map[string][]bool)
+    gen.reserved.cabinets = make(map[string][]bool)
     for _, group := range groups {
         var (
             schedule = gen.NewSchedule(group.Name)
@@ -142,7 +130,7 @@ func (gen *Generator) Generate(template [][]*Schedule) []*Schedule {
         for _, subject := range subjects {
             switch {
             case gen.haveTheoreticalLessons(subject):
-                if gen.Debug {
+                if DEBUG {
                     fmt.Println(group.Name, subject.Name, ": not splited THEORETICAL;")
                 }
                 gen.tryGenerate(ALL, THEORETICAL, group, subject, schedule, countLessons, templt)
@@ -151,20 +139,20 @@ func (gen *Generator) Generate(template [][]*Schedule) []*Schedule {
                 // Если подгруппа неделимая, тогда провести практику в виде полной пары.
                 // Иначе разделить практику на две подгруппы.
                 if !gen.withSubgroups(group.Name) {
-                    if gen.Debug {
+                    if DEBUG {
                         fmt.Println(group.Name, subject.Name, ": not splited PRACTICAL;")
                     }
                     gen.tryGenerate(ALL, PRACTICAL, group, subject, schedule, countLessons, templt)
                 } else {
                     switch RandSubgroup() {
                     case A:
-                        if gen.Debug {
+                        if DEBUG {
                             fmt.Println(group.Name, subject.Name, ": splited (A -> B);")
                         }
                         gen.tryGenerate(A, PRACTICAL, group, subject, schedule, countLessons, templt)
                         gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons, templt)
                     case B:
-                        if gen.Debug {
+                        if DEBUG {
                             fmt.Println(group.Name, subject.Name, ": splited (B -> A);")
                         }
                         gen.tryGenerate(B, PRACTICAL, group, subject, schedule, countLessons, templt)
@@ -175,8 +163,6 @@ func (gen *Generator) Generate(template [][]*Schedule) []*Schedule {
         }
         list = append(list, schedule)
     }
-    gen.Reserved.Teachers = make(map[string][]bool)
-    gen.Reserved.Cabinets = make(map[string][]bool)
     gen.Day = (gen.Day + 1) % 7
     return sortSchedule(list)
 }
