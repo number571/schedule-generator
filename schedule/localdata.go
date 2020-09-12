@@ -641,10 +641,11 @@ func sortSchedule(schedule []*Schedule) []*Schedule {
     return schedule
 }
 
-func colWidthForCabinets(index int) (int, int, float64) {
-    var col = (index+1)*3+1
-    return col, col, COL_W_CAB
-}
+// // For xlsx
+// func colWidthForCabinets(index int) (int, int, float64) {
+//     var col = (index+1)*3+1
+//     return col, col, COL_W_CAB
+// }
 
 // Returns [min:max] value.
 func random(min, max int) int {

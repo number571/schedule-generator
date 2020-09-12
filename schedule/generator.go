@@ -2,9 +2,9 @@ package schedule
 
 import (
     "fmt"
-    "strconv"
+    // "strconv"
     "encoding/json"
-    "github.com/tealeg/xlsx"
+    // "github.com/tealeg/xlsx"
 )
 
 func NewGenerator(data *Generator) *Generator {
@@ -84,17 +84,17 @@ func (gen *Generator) Template() [][]*Schedule {
         generator = new(Generator)
     )
     unpackJSON(packJSON(gen), generator)
-    file, name := CreateXLSX(OUTDATA + "template.xlsx")
+    // file, name := CreateXLSX(OUTDATA + "template.xlsx")
     for i := generator.Day; i < generator.Day+7; i++ {
         weekLessons[i % 7] = generator.Generate(nil)
-        if DEBUG {
-            generator.WriteXLSX(
-                file,
-                name,
-                weekLessons[i],
-                int(i),
-            )
-        }
+        // if DEBUG {
+        //     generator.WriteXLSX(
+        //         file,
+        //         name,
+        //         weekLessons[i],
+        //         int(i),
+        //     )
+        // }
     }
     return weekLessons
 }
@@ -167,154 +167,154 @@ func (gen *Generator) Generate(template [][]*Schedule) []*Schedule {
     return sortSchedule(list)
 }
 
-func CreateXLSX(filename string) (*xlsx.File, string) {
-    file := xlsx.NewFile()
-    _, err := file.AddSheet("Init")
-    if err != nil {
-        return nil, ""
-    }
-    err = file.Save(filename)
-    if err != nil {
-        return nil, ""
-    }
-    return file, filename
-}
+// func CreateXLSX(filename string) (*xlsx.File, string) {
+//     file := xlsx.NewFile()
+//     _, err := file.AddSheet("Init")
+//     if err != nil {
+//         return nil, ""
+//     }
+//     err = file.Save(filename)
+//     if err != nil {
+//         return nil, ""
+//     }
+//     return file, filename
+// }
 
-func (gen *Generator) WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, iter int) error {
-    const (
-        colWidth = 30
-        rowHeight = 30
-    )
+// func (gen *Generator) WriteXLSX(file *xlsx.File, filename string, schedule []*Schedule, iter int) error {
+//     const (
+//         colWidth = 30
+//         rowHeight = 30
+//     )
 
-    var (
-        MAXCOL = uint(3)
-    )
+//     var (
+//         MAXCOL = uint(3)
+//     )
 
-    rowsNext := uint(len(schedule)) / MAXCOL
-    if rowsNext == 0 || uint(len(schedule)) % MAXCOL != 0 {
-        rowsNext += 1
-    }
+//     rowsNext := uint(len(schedule)) / MAXCOL
+//     if rowsNext == 0 || uint(len(schedule)) % MAXCOL != 0 {
+//         rowsNext += 1
+//     }
 
-    var (
+//     var (
         
-        colNum = uint(NUM_TABLES + 2)
+//         colNum = uint(NUM_TABLES + 2)
         
-        row = make([]*xlsx.Row, colNum * rowsNext) //  * (rowsNext + 1)
-        cell *xlsx.Cell
-        dayN = gen.Day
-        day = ""
-    )
+//         row = make([]*xlsx.Row, colNum * rowsNext) //  * (rowsNext + 1)
+//         cell *xlsx.Cell
+//         dayN = gen.Day
+//         day = ""
+//     )
 
-    if dayN == SUNDAY {
-        dayN = SATURDAY
-    } else {
-        dayN -= 1
-    }
+//     if dayN == SUNDAY {
+//         dayN = SATURDAY
+//     } else {
+//         dayN -= 1
+//     }
 
-    switch dayN {
-    case SUNDAY: day = "Sunday"
-    case MONDAY: day = "Monday"
-    case TUESDAY: day = "Tuesday"
-    case WEDNESDAY: day = "Wednesday"
-    case THURSDAY: day = "Thursday"
-    case FRIDAY: day = "Friday"
-    case SATURDAY: day = "Saturday"
-    }
+//     switch dayN {
+//     case SUNDAY: day = "Sunday"
+//     case MONDAY: day = "Monday"
+//     case TUESDAY: day = "Tuesday"
+//     case WEDNESDAY: day = "Wednesday"
+//     case THURSDAY: day = "Thursday"
+//     case FRIDAY: day = "Friday"
+//     case SATURDAY: day = "Saturday"
+//     }
 
-    sheet, err := file.AddSheet(day + "-" + strconv.Itoa(iter))
-    if err != nil {
-        return err
-    }
+//     sheet, err := file.AddSheet(day + "-" + strconv.Itoa(iter))
+//     if err != nil {
+//         return err
+//     }
 
-    sheet.SetColWidth(2, int(MAXCOL)*3+1, COL_W)
+//     sheet.SetColWidth(2, int(MAXCOL)*3+1, COL_W)
 
-    for r := uint(0); r < rowsNext; r++ {
-        for i := uint(0); i < colNum; i++ {
-            row[(r*colNum)+i] = sheet.AddRow() // (r*rowsNext)+
-            row[(r*colNum)+i].SetHeight(ROW_H)
-            cell = row[(r*colNum)+i].AddCell()
-            if i == 0 {
-                cell.Value = "Пара"
-                continue
-            }
-            cell.Value = strconv.Itoa(int(i-1))
-        }
-    }
+//     for r := uint(0); r < rowsNext; r++ {
+//         for i := uint(0); i < colNum; i++ {
+//             row[(r*colNum)+i] = sheet.AddRow() // (r*rowsNext)+
+//             row[(r*colNum)+i].SetHeight(ROW_H)
+//             cell = row[(r*colNum)+i].AddCell()
+//             if i == 0 {
+//                 cell.Value = "Пара"
+//                 continue
+//             }
+//             cell.Value = strconv.Itoa(int(i-1))
+//         }
+//     }
 
-    index := uint(0)
-    exit: for r := uint(0); r < rowsNext; r++ {
-        for i := uint(0); i < MAXCOL; i++ {
-            if uint(len(schedule)) <= index {
-                break exit
-            }
+//     index := uint(0)
+//     exit: for r := uint(0); r < rowsNext; r++ {
+//         for i := uint(0); i < MAXCOL; i++ {
+//             if uint(len(schedule)) <= index {
+//                 break exit
+//             }
 
-            savedCell := row[(r*colNum)+0].AddCell()
-            savedCell.Value = "Группа " + schedule[index].Group
+//             savedCell := row[(r*colNum)+0].AddCell()
+//             savedCell.Value = "Группа " + schedule[index].Group
 
-            cell = row[(r*colNum)+0].AddCell()
-            cell = row[(r*colNum)+0].AddCell()
+//             cell = row[(r*colNum)+0].AddCell()
+//             cell = row[(r*colNum)+0].AddCell()
 
-            savedCell.Merge(2, 0)
+//             savedCell.Merge(2, 0)
 
-            cell = row[(r*colNum)+1].AddCell()
-            cell.Value = "Предмет"
+//             cell = row[(r*colNum)+1].AddCell()
+//             cell.Value = "Предмет"
 
-            cell = row[(r*colNum)+1].AddCell()
-            cell.Value = "Преподаватель"
+//             cell = row[(r*colNum)+1].AddCell()
+//             cell.Value = "Преподаватель"
 
-            cell = row[(r*colNum)+1].AddCell()
-            cell.Value = "Кабинет"
+//             cell = row[(r*colNum)+1].AddCell()
+//             cell.Value = "Кабинет"
 
-            for j, trow := range schedule[index].Table {
-                cell = row[(r*colNum)+uint(j)+2].AddCell()
-                if trow.Subject[A] == trow.Subject[B] {
-                    cell.Value = trow.Subject[A]
-                } else {
-                    if trow.Subject[A] != "" {
-                        cell.Value = trow.Subject[A] + " (A)"
-                    }
-                    if trow.Subject[B] != "" {
-                        cell.Value += "\n" + trow.Subject[B] + " (B)"
-                    }
-                }
+//             for j, trow := range schedule[index].Table {
+//                 cell = row[(r*colNum)+uint(j)+2].AddCell()
+//                 if trow.Subject[A] == trow.Subject[B] {
+//                     cell.Value = trow.Subject[A]
+//                 } else {
+//                     if trow.Subject[A] != "" {
+//                         cell.Value = trow.Subject[A] + " (A)"
+//                     }
+//                     if trow.Subject[B] != "" {
+//                         cell.Value += "\n" + trow.Subject[B] + " (B)"
+//                     }
+//                 }
 
-                cell = row[(r*colNum)+uint(j)+2].AddCell()
-                if trow.Teacher[A] == trow.Teacher[B] {
-                    cell.Value = trow.Teacher[A]
-                } else {
-                    if trow.Teacher[A] != "" {
-                        cell.Value = trow.Teacher[A]
-                    }
-                    if trow.Teacher[B] != "" {
-                        cell.Value += "\n" + trow.Teacher[B]
-                    }
-                }
+//                 cell = row[(r*colNum)+uint(j)+2].AddCell()
+//                 if trow.Teacher[A] == trow.Teacher[B] {
+//                     cell.Value = trow.Teacher[A]
+//                 } else {
+//                     if trow.Teacher[A] != "" {
+//                         cell.Value = trow.Teacher[A]
+//                     }
+//                     if trow.Teacher[B] != "" {
+//                         cell.Value += "\n" + trow.Teacher[B]
+//                     }
+//                 }
 
-                sheet.SetColWidth(colWidthForCabinets(int(j)))
-                cell = row[(r*colNum)+uint(j)+2].AddCell()
-                if trow.Cabinet[A] == trow.Cabinet[B] {
-                    cell.Value = trow.Cabinet[A]
-                } else {
-                    if trow.Cabinet[A] != "" {
-                        cell.Value = trow.Cabinet[A]
-                    }
-                    if trow.Cabinet[B] != "" {
-                        cell.Value += "\n" + trow.Cabinet[B]
-                    }
-                }
-            }
+//                 sheet.SetColWidth(colWidthForCabinets(int(j)))
+//                 cell = row[(r*colNum)+uint(j)+2].AddCell()
+//                 if trow.Cabinet[A] == trow.Cabinet[B] {
+//                     cell.Value = trow.Cabinet[A]
+//                 } else {
+//                     if trow.Cabinet[A] != "" {
+//                         cell.Value = trow.Cabinet[A]
+//                     }
+//                     if trow.Cabinet[B] != "" {
+//                         cell.Value += "\n" + trow.Cabinet[B]
+//                     }
+//                 }
+//             }
 
-            index++
-        }
-    }
+//             index++
+//         }
+//     }
 
-    err = file.Save(filename)
-    if err != nil {
-        return err
-    }
+//     err = file.Save(filename)
+//     if err != nil {
+//         return err
+//     }
 
-    return nil
-}
+//     return nil
+// }
 
 func RandSubgroup() SubgroupType {
     return SubgroupType(random(0, 1))
