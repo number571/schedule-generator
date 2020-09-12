@@ -19,6 +19,7 @@ func main() {
 	http.ListenAndServe(":7545", nil)
 }
 
+// Address: create
 // Method: GET
 // Result:
 /*
@@ -36,6 +37,7 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
+// Address: update
 // Method: POST
 // API:
 /*
