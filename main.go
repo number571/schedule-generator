@@ -19,6 +19,14 @@ func main() {
 	http.ListenAndServe(":7545", nil)
 }
 
+// Method: GET
+// Result:
+/*
+	{
+		return: int
+	}
+*/
+// Для теста подключения.
 func indexPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(struct{
@@ -29,6 +37,21 @@ func indexPage(w http.ResponseWriter, r *http.Request) {
 }
 
 // Method: POST
+// API:
+/*
+	{
+		day: int,      // день недели [0, 6]
+		groups: json,  // json с группами
+		teachers: json // json с учителями
+	}
+*/
+// Result:
+/*
+	{
+		generator: json, // новый генератор
+		return: int      // ошибка
+	}
+*/
 func createPage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -85,10 +108,26 @@ func createPage(w http.ResponseWriter, r *http.Request) {
 }
 
 // Method: POST
+// API:
+/*
+	{
+		generator: json // старая версия генератора
+	}
+*/
+// Result:
+/*
+	{
+		generator: json, // новая версия генератора
+		schedule: json,  // расписание на день
+		hashsum: string, // хеш-сумма шаблона
+		return: int      // ошибка
+	}
+*/
 func generatePage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var data struct {
+		Generator *sc.Generator `json:"generator"`
 		Schedule []*sc.Schedule `json:"schedule"`
 		Hashsum string `json:"hashsum"`
 		Return int `json:"return"`
@@ -118,9 +157,12 @@ func generatePage(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	generator := read.Generator
 	hash := sha256.Sum256(jsonData)
+
+	data.Schedule = generator.Generate(Template)
 	data.Hashsum = hex.EncodeToString(hash[:])
-	data.Schedule = read.Generator.Generate(Template)
+	data.Generator = generator
 
 	enc := json.NewEncoder(w)
 	enc.SetIndent("", "\t")
