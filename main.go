@@ -15,7 +15,7 @@ var (
 func main() {
 	http.HandleFunc("/", indexPage)
 	http.HandleFunc("/create", createPage)
-	http.HandleFunc("/generate", generatePage)
+	http.HandleFunc("/update", updatePage)
 	http.ListenAndServe(":7545", nil)
 }
 
@@ -123,7 +123,7 @@ func createPage(w http.ResponseWriter, r *http.Request) {
 		return: int      // ошибка
 	}
 */
-func generatePage(w http.ResponseWriter, r *http.Request) {
+func updatePage(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var data struct {
